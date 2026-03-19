@@ -1,0 +1,65 @@
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.4s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+}
+
+
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition:
+    max-height 0.4s ease,
+    opacity 0.4s ease;
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+
+.fade-slide-enter-to,
+.fade-slide-leave-from {
+  max-height: 7em;
+  opacity: 1;
+}
+
+/* Appearance transitions for main banner */
+.appearance-from-right-enter-active,
+.appearance-from-left-enter-active {
+  transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+}
+
+.appearance-from-right-leave-active,
+.appearance-from-left-leave-active {
+  transition: transform 0.2s ease-in, opacity 0.2s ease-in;
+}
+
+.appearance-from-right-enter-from {
+  transform: translateX(3rem);
+  opacity: 0;
+}
+
+.appearance-from-right-leave-to {
+  transform: translateX(-3rem);
+  opacity: 0;
+}
+
+.appearance-from-left-enter-from {
+  transform: translateX(-3rem);
+  opacity: 0;
+}
+
+.appearance-from-left-leave-to {
+  transform: translateX(3rem);
+  opacity: 0;
+}

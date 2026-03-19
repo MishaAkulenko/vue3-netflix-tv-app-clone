@@ -1,0 +1,54 @@
+html {
+  font-size: clamp(12px, 0.8vw + 3px, 36px);
+}
+
+:root {
+  --netflix-red: #e50914;
+  --netflix-red-dark: #b81d24;
+
+  --vt-c-page-side-padding: 2.5rem;
+  --vt-c-header-icons-heiht: 2.5rem;
+  --vt-c-header-height: 6rem;
+  --vt-c-button-default-height: 3rem;
+  --vt-c-root-container-width: calc(100vw - var(--vt-c-page-side-padding )* 2);
+  --vt-c-main-banner-aspect-ratio: 0.45;
+
+
+  --color-background: #ffffff;
+  --color-background-soft: #f3f3f3;
+  --color-background-mute: #e5e5e5;
+  
+  --color-text: #141414;
+  --color-text-soft: #545454;
+  --color-text-mute: #808080;
+
+  --color-border: #141414;
+  --color-border-hover: #b3b3b3;
+  
+  --color-primary: var(--netflix-red);
+  --color-primary-hover: var(--netflix-red-dark);
+}
+
+:root.dark {
+  --color-background: #000;
+  --color-background-soft: #181818;
+  --color-background-mute: #2f2f2f;
+  
+  --color-text: #ffffff;
+  --color-text-soft: #e5e5e5;
+  --color-text-mute: #b3b3b3;
+
+  --color-border: #ffffff;
+  --color-border-hover: #4d4d4d;
+  
+  --color-primary: var(--netflix-red);
+  --color-primary-hover: var(--netflix-red-dark);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
