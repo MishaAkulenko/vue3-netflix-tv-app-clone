@@ -20,4 +20,7 @@ app.use(i18n);
 app.use(pinia);
 app.use(router);
 
-app.mount('#app');
+router.isReady().then(() => {
+  // Щоб установити початковий фокус на правильному розділі, потрібно дочекатись, поки роутер змонтується
+  app.mount('#app');
+});

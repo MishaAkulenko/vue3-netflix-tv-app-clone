@@ -11,10 +11,21 @@ import { APP_HEADER_ID } from '@/constants/globalConst.ts';
 
 const { t } = useI18n();
 const router = useRouter();
+const route = useRoute();
 
 const props = defineProps<{
   grid: Grid;
 }>();
+
+const headerHasFocus = computed(() => isFocused.value || hasFocusedChildren.value);
+
+const navigateTo = (path: string) => {
+  router.push(path);
+};
+const getInitColumn = () => {
+  const routes = [null, '/', '/series', '/movies', '/my-netflix']; // null - кнопка профілю без роуту
+  return routes.findIndex((r) => r === route.fullPath);
+};
 
 const { setInitFocus, idForChildren, isFocused, hasFocusedChildren } = useFocus({
   id: APP_HEADER_ID,
@@ -22,19 +33,11 @@ const { setInitFocus, idForChildren, isFocused, hasFocusedChildren } = useFocus(
   column: props.grid.column,
   parentId: props.grid.parentId,
   afterFocusEnter() {
-    setInitFocus({ column: 1 }); //  Home по дефолту
+    setInitFocus();
   }
 });
 
-const route = useRoute();
-const headerHasFocus = computed(() => isFocused.value || hasFocusedChildren.value);
-
-// Самий початковий фокус у додатку Home по дефолту
-setInitFocus({ row: 0, column: 1 });
-
-const navigateTo = (path: string) => {
-  router.push(path);
-};
+setInitFocus({ column: getInitColumn() }); // самий початковий фокус в додатку
 </script>
 
 <template>
@@ -115,24 +118,24 @@ const navigateTo = (path: string) => {
   align-items: center;
   gap: 0.5rem;
 
-    .nav-btn {
-      color: var(--color-text);
-      text-decoration: none;
-      font-size: 1.1rem;
-      font-weight: 500;
-      transition: all 0.2s ease;
-      padding: 0 1.5rem;
-      border-radius: 2rem;
+  .nav-btn {
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    padding: 0 1.5rem;
+    border-radius: 2rem;
 
-      &.focused {
-        background-color: var(--color-text);
-        color: var(--color-background);
-      }
-
-      &.active {
-        background-color: var(--color-background-mute);
-      }
+    &.focused {
+      background-color: var(--color-text);
+      color: var(--color-background);
     }
+
+    &.active {
+      background-color: var(--color-background-mute);
+    }
+  }
 }
 
 .header-right {
