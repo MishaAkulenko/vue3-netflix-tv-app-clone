@@ -80,17 +80,41 @@ class NavManager {
     }
   }
   unregisterNode(id: string) {
+    this.removeNodeFromParent(id);
     this.nodes.delete(id);
     // Логіка передачі фокусу іншому, якщо цей компонент (наприклад модалка) зник
   }
+  removeNodeFromParent(id: string) {
+    const node = this.nodes.get(id);
+    if (!node?.parentId) return;
 
+    const parentNode = this.nodes.get(node.parentId);
+
+    if (parentNode?.lastFocusedChildren?.id === node.id) {
+      // якщо нода, яку видаляємо, була останньо сфокусованим чілдреном для батька, то очищаємо цей параметр у батька
+      parentNode.lastFocusedChildren = null;
+    }
+    if (parentNode?.childrenMatrix?.[node.row]) {
+      // Потрібно видалити ноду з матриці батька, щоб вони не накопичувались.
+      // Часто компоненти оновлюють свої дані,
+      // і щоб в ручну не очищати чілдрени в кожному компоненті(а тобто програміст має за цим слідкувати),
+      // то краще глобально зробити заглушку, щоб чілдрен сам себе помічав як видалений
+      //TODO додати після тестів перевірку на null в усіх навігаційних функціях.
+      parentNode.childrenMatrix[node.row][node.column] = null;
+    }
+  }
   setFocus(id: string) {
     if (import.meta.env.DEV && id === undefined) {
       console.warn('SET_FOCUS_ERROR');
       return;
     }
+    const currentNode = this.nodes.get(this.currentFocusId.value);
 
-    if (this.currentFocusId.value) {
+    if (currentNode) {
+      const parentOfCurrentNode: FocusableNode = this.nodes.get(currentNode.parentId);
+
+      parentOfCurrentNode.lastFocusedChildren = currentNode;
+
       // Викликаємо метод onBlur у старого елемента
       this.nodes.get(this.currentFocusId.value)?.beforeFocusLeave?.();
     }
@@ -104,6 +128,10 @@ class NavManager {
     const currentNode = this.nodes.get(id);
     const needfulChild = currentNode?.childrenMatrix?.[row]?.[column];
 
+    if (currentNode?.lastFocusedChildren) {
+      this.setFocus(currentNode.lastFocusedChildren.id);
+      return;
+    }
     if (needfulChild === undefined) {
       // якщо на момент встановлення початкового фокусу потрібні ноди чілдренів ще не зареєстровані,
       this.initFocusParams = { id, row, column }; // то вкажемо, що цей компонент очікує реєстрації чілдренів
@@ -299,7 +327,6 @@ class NavManager {
   hoistFocusToBottomNeighbor(node: FocusableNodeConfig) {
     const parent = this.nodes.get(node.parentId);
     const grandParent = this.nodes.get(parent?.parentId);
-
     if (
       !parent ||
       !grandParent ||

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Banner } from '@/types/banners.ts';
+import MovieTags from '@/components/movies/MovieTags.vue';
 
 defineProps<{
   banner: Banner;
@@ -14,12 +15,13 @@ defineEmits<{
 
 <template>
   <div class="banner-info">
-    <div class="tags-list">
-      <span>{{ banner.genre }}</span>
-      <span>{{ banner.year }}</span>
-      <span>{{ banner.duration }}</span>
-      <span>{{ banner.ageRating }}</span>
-    </div>
+    <MovieTags
+      :genre="banner.genre"
+      :year="banner.year"
+      :duration="banner.duration"
+      :age-rating="banner.ageRating"
+      class="banner-tags"
+    />
     <transition
       name="fade-slide"
       @after-enter="$emit('after-enter')"
@@ -39,26 +41,8 @@ defineEmits<{
     will-change: max-height, opacity;
   }
 
-  .tags-list {
-    display: flex;
-    gap: 0.5rem;
-    white-space: nowrap;
+  .banner-tags {
     margin-bottom: 0.5rem;
-
-    span {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-weight: 600;
-      &:not(:last-child)::after {
-        content: '';
-        display: block;
-        width: 0.3rem;
-        height: 0.3rem;
-        border-radius: 50%;
-        background-color: #fff;
-      }
-    }
   }
 }
 

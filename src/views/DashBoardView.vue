@@ -3,27 +3,26 @@ import MovieSlide from '@/components/movies/MovieSlide.vue';
 import BaseSlider from '@/components/base/BaseSlider.vue';
 import MainBanner from '@/components/MainBanner.vue';
 
-import { useBackgroundStore } from '@/stores/backgroundStore.ts';
 import { type DashboardPayload, DashboardService } from '@/services/dashboardService.ts';
 import { useLocaleStore } from '@/stores/localeStore.ts';
 
 import { useFocus } from '@/composables/useFocus.ts';
 import { useQuery } from '@tanstack/vue-query';
 import { useRoute } from 'vue-router';
-import type { Movie } from '@/types/movies';
+
 import type { Grid } from '@/types/grid';
 import { storeToRefs } from 'pinia';
-import { useI18n } from 'vue-i18n';
-import { computed } from 'vue';
-const { t } = useI18n();
+import { computed, ref, watch } from 'vue';
+import BaseVerticalScrollList from '@/components/base/BaseVerticalScrollList.vue';
 
 const props = defineProps<{
   grid: Grid;
 }>();
 
 const route = useRoute();
-const bgStore = useBackgroundStore();
+
 const { locale } = storeToRefs(useLocaleStore());
+const slides = ref<any[]>([]);
 
 const {
   isLoading,
@@ -39,14 +38,7 @@ const {
   staleTime: 5 * 60 * 1000
 });
 
-const { setFocusedSlideInfo, setSplashImage } = bgStore;
-
-const handleSlideFocus = (slideData: Movie) => {
-  setFocusedSlideInfo(slideData);
-  setSplashImage(slideData.splash);
-};
-
-const { idForChildren, setInitFocus } = useFocus({
+const { idForChildren, setInitFocus, resetChildren } = useFocus({
   id: `DashBoardView`,
   parentId: props.grid.parentId,
   row: props.grid.row,
@@ -55,30 +47,36 @@ const { idForChildren, setInitFocus } = useFocus({
     setInitFocus();
   }
 });
+
+watch(
+  () => route.fullPath,
+  () => {
+    resetChildren();
+  }
+);
 </script>
 
 <template>
   <main>
-    <MainBanner :grid="{ row: 0, column: 0, parentId: idForChildren }" />
-    <div class="loader all-center" v-if="isLoading">{{ t('common.general.loading') }}...</div>
-    <div class="error-message all-center" v-else-if="isError">
-      {{ t('common.errors.unknown') }}
-    </div>
-    <div class="browse-list-wrapper" v-else>
-      <div
-        class="category-wrapper"
-        ref="slidersList"
-        v-for="(category, index) in categories"
-        :key="`${route.path}-${index}`"
-      >
-        <BaseSlider
-          :grid="{ row: index + 1, column: 0, parentId: idForChildren }"
-          :list="category.items"
-          :title="category.category"
-          :slideComponent="MovieSlide"
-          :key="index"
-        />
-      </div>
+    <div class="browse-list-wrapper" :key="route.fullPath">
+      <BaseVerticalScrollList :list="categories">
+        <template #slotBeforeList="{ handleFocusedRow }">
+          <MainBanner
+            @on-focus="handleFocusedRow(0, 0)"
+            :grid="{ row: 0, column: 0, parentId: idForChildren }"
+          />
+        </template>
+        <template #default="{ listItem, index, handleFocusedRow }">
+          <BaseSlider
+            :ref="(el) => (slides[index] = el)"
+            :grid="{ row: index + 1, column: 0, parentId: idForChildren }"
+            :list="listItem.items"
+            :title="listItem.category"
+            :slideComponent="MovieSlide"
+            @on-focus="handleFocusedRow(index + 1, slides[index]?.$el?.offsetTop)"
+          />
+        </template>
+      </BaseVerticalScrollList>
     </div>
   </main>
 </template>

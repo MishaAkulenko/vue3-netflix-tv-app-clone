@@ -12,4 +12,7 @@ export interface Movie {
   trailer: string;
   playlink: string;
   logo: string;
+  description: string;
+  duration?: string;
+  ageRating?: string;
 }

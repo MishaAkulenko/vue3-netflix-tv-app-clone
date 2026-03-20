@@ -9,7 +9,9 @@ const props = defineProps<{
   title?: string;
   grid: Grid;
 }>();
-
+const emit = defineEmits<{
+  (e: 'on-focus'): void;
+}>();
 const { setInitFocus, idForChildren } = useFocus({
   name: props.title,
   row: props.grid.row,
@@ -17,6 +19,7 @@ const { setInitFocus, idForChildren } = useFocus({
   parentId: props.grid.parentId,
   afterFocusEnter() {
     setInitFocus();
+    emit('on-focus');
   }
 });
 </script>
@@ -42,7 +45,7 @@ const { setInitFocus, idForChildren } = useFocus({
 .title {
   padding-left: var(--vt-c-page-side-padding);
   font-weight: 600;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   margin: 1rem 0 0.5rem;
 }
 .viewport-wrapper {

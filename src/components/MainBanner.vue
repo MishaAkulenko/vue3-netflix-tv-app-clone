@@ -8,7 +8,7 @@ import { BannersService } from '@/services/BannerService.ts';
 import { useQuery } from '@tanstack/vue-query';
 import type { Banner } from '@/types/banners.ts';
 import { useRoute } from 'vue-router';
-import { ref, watch, useTemplateRef } from 'vue';
+import { ref, watch } from 'vue';
 import { useLocaleStore } from '@/stores/localeStore.ts';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
@@ -16,14 +16,16 @@ import { useI18n } from 'vue-i18n';
 const props = defineProps<{
   grid: Grid;
 }>();
-
+const emit = defineEmits<{
+  (e: 'on-focus'): void;
+}>();
 const route = useRoute();
 const { locale } = storeToRefs(useLocaleStore());
 const { t } = useI18n();
 
 const currentBanner = ref<Banner | null>(null);
 const trailerPlaying = ref(false);
-const videoRef = useTemplateRef<HTMLVideoElement>('video');
+const videoRef = ref<HTMLVideoElement>();
 
 const { isLoading, data: bannersList } = useQuery({
   queryKey: ['banners', locale],
@@ -61,10 +63,13 @@ const setSectionFirstBanner = () => {
 
 watch(bannersList, setSectionFirstBanner, { immediate: true });
 watch(route, setSectionFirstBanner);
+watch(hasFocusedChildren, (hasFocused) => {
+  hasFocused && emit('on-focus');
+});
 </script>
 
 <template>
-  <transition :name="route.meta.routeAnimation" mode="out-in">
+  <transition :name="route.meta.routeAnimation" mode="out-in" appear>
     <div
       :key="route.name"
       class="main-banner"
@@ -72,7 +77,6 @@ watch(route, setSectionFirstBanner);
       @mouseenter="focusMe"
     >
       <div class="main-banner-inner" v-if="currentBanner">
-        <img class="logo" src="../assets/img/logo.svg" alt="" />
         <transition name="fade">
           <img
             class="banner-image"
@@ -111,7 +115,7 @@ watch(route, setSectionFirstBanner);
             </BaseButton>
           </div>
         </div>
-        <video class="banner-trailer" ref="video" :src="currentBanner.trailer" />
+        <video class="banner-trailer" ref="videoRef" :src="currentBanner.trailer" />
       </div>
     </div>
   </transition>
@@ -120,7 +124,7 @@ watch(route, setSectionFirstBanner);
 <style scoped lang="scss">
 .main-banner {
   height: calc(var(--vt-c-root-container-width) * var(--vt-c-main-banner-aspect-ratio));
-  max-height: calc(95vh - var(--vt-c-header-height));
+  max-height: calc(100vh - var(--vt-c-header-height) - 4rem);
   width: var(--vt-c-root-container-width);
   margin: var(--vt-c-header-height) auto 0;
   border: 0.2rem solid transparent;

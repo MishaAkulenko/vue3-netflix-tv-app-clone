@@ -3,8 +3,9 @@ import HeaderProfileMenu from '@/components/header/HeaderProfileMenu.vue';
 import BaseButton from '@/components/base/BaseButton.vue';
 
 import { useFocus } from '@/composables/useFocus.ts';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import { computed } from 'vue';
 import type { Grid } from '@/types/grid';
 import { APP_HEADER_ID } from '@/constants/globalConst.ts';
 
@@ -15,7 +16,7 @@ const props = defineProps<{
   grid: Grid;
 }>();
 
-const { setInitFocus, idForChildren } = useFocus({
+const { setInitFocus, idForChildren, isFocused, hasFocusedChildren } = useFocus({
   id: APP_HEADER_ID,
   row: props.grid.row,
   column: props.grid.column,
@@ -24,6 +25,9 @@ const { setInitFocus, idForChildren } = useFocus({
     setInitFocus({ column: 1 }); //  Home по дефолту
   }
 });
+
+const route = useRoute();
+const headerHasFocus = computed(() => isFocused.value || hasFocusedChildren.value);
 
 // Самий початковий фокус у додатку Home по дефолту
 setInitFocus({ row: 0, column: 1 });
@@ -42,6 +46,7 @@ const navigateTo = (path: string) => {
     <nav class="header-center">
       <BaseButton
         class="nav-btn"
+        :class="{ active: route.path === '/' && !headerHasFocus }"
         :grid="{ row: 0, column: 1, parentId: idForChildren }"
         :focus-on-hover="true"
         @on-enter="navigateTo('/')"
@@ -51,6 +56,7 @@ const navigateTo = (path: string) => {
       </BaseButton>
       <BaseButton
         class="nav-btn"
+        :class="{ active: route.path === '/series' && !headerHasFocus }"
         :grid="{ row: 0, column: 2, parentId: idForChildren }"
         :focus-on-hover="true"
         @on-enter="navigateTo('/series')"
@@ -60,6 +66,7 @@ const navigateTo = (path: string) => {
       </BaseButton>
       <BaseButton
         class="nav-btn"
+        :class="{ active: route.path === '/movies' && !headerHasFocus }"
         :grid="{ row: 0, column: 3, parentId: idForChildren }"
         :focus-on-hover="true"
         @on-enter="navigateTo('/movies')"
@@ -69,6 +76,7 @@ const navigateTo = (path: string) => {
       </BaseButton>
       <BaseButton
         class="nav-btn"
+        :class="{ active: route.path === '/my-netflix' && !headerHasFocus }"
         :grid="{ row: 0, column: 4, parentId: idForChildren }"
         :focus-on-hover="true"
         @on-enter="navigateTo('/my-netflix')"
@@ -107,20 +115,24 @@ const navigateTo = (path: string) => {
   align-items: center;
   gap: 0.5rem;
 
-  .nav-btn {
-    color: var(--color-text);
-    text-decoration: none;
-    font-size: 1.1rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    padding: 0 1.5rem;
-    border-radius: 2rem;
-
-    &.focused {
-      background-color: var(--color-background-mute);
+    .nav-btn {
       color: var(--color-text);
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      padding: 0 1.5rem;
+      border-radius: 2rem;
+
+      &.focused {
+        background-color: var(--color-text);
+        color: var(--color-background);
+      }
+
+      &.active {
+        background-color: var(--color-background-mute);
+      }
     }
-  }
 }
 
 .header-right {
