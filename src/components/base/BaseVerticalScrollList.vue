@@ -55,10 +55,12 @@ const moveScroll = (top?: number) => {
   .scroll-list-row {
     opacity: 0;
     transition: opacity 0.5s ease;
+    pointer-events: none;
     &.visible-row {
       opacity: 0.6;
     }
     &.visible-row-active {
+      pointer-events: all;
       opacity: 1;
     }
   }
