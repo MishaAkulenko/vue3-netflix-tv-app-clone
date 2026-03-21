@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
 import { ref } from 'vue';
+import { useFocusedMethods } from '@/composables/useFocus.ts';
 
 const props = defineProps<{
   list?: any[];
 }>();
 
-const route = useRoute();
 const offsetTop = ref(0);
 const focusedRow = ref(0);
+const { moveFocusDown, moveFocusUp } = useFocusedMethods();
 
 const handleFocusedRow = (index: number, top?: number) => {
   focusedRow.value = index;
@@ -17,10 +17,13 @@ const handleFocusedRow = (index: number, top?: number) => {
 const moveScroll = (top?: number) => {
   offsetTop.value = top ?? 0;
 };
+const handleMouseWheel = (e: WheelEvent) => {
+  e.deltaY > 0 ? moveFocusDown() : moveFocusUp();
+};
 </script>
 
 <template>
-  <div class="scroll-list-wrapper">
+  <div class="scroll-list-wrapper" @mousewheel="handleMouseWheel">
     <div class="scroll-list-inner" :style="{ transform: `translate3d(0, -${offsetTop}px, 0)` }">
       <div
         class="scroll-list-row slot-before-list"

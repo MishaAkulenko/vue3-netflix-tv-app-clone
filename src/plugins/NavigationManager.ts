@@ -157,6 +157,9 @@ class NavManager {
 
     this.parentsOfFocusedNode.value = newParents;
   }
+  getFocusedNode() {
+    return this.nodes.get(this.currentFocusId.value);
+  }
   getChildrenList(id: string) {
     return this.nodes.get(id)?.childrenMatrix;
   }

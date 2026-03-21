@@ -47,13 +47,30 @@ export function useFocus(config: FocusableNodeConfig) {
 
   return {
     idForChildren: uniqId, //id цього компонента буде parentId для дочірніх компонентів, захист від різних неймінгів
-    isFocused,
     focusMe,
+    isFocused,
     setInitFocus,
+    resetChildren,
+    getChildrenList,
     setFocusOnHeader,
     hasFocusedChildren,
-    getChildrenList,
-    setFocusOnFirstChild,
-    resetChildren
+    setFocusOnFirstChild
   };
 }
+
+export const useFocusedMethods = function () {
+  return {
+    moveFocusDown() {
+      NavigationManager.handleBottomBtn(NavigationManager.getFocusedNode());
+    },
+    moveFocusUp() {
+      NavigationManager.handleTopBtn(NavigationManager.getFocusedNode());
+    },
+    moveFocusLeft() {
+      NavigationManager.handleLeftBtn(NavigationManager.getFocusedNode());
+    },
+    moveFocusRight() {
+      NavigationManager.handleRightBtn(NavigationManager.getFocusedNode());
+    }
+  };
+};
