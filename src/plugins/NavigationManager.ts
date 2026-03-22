@@ -25,7 +25,7 @@ export interface FocusableNodeConfig {
 
 export interface FocusableNode extends FocusableNodeConfig {
   id: string;
-  childrenMatrix?: any[];
+  childrenMatrix?: FocusableNodeConfig[][];
 }
 type initFocusParams = {
   id: string;
@@ -61,7 +61,7 @@ class NavManager {
     const parentNode = this.nodes.get(parentId);
     const matrix = parentNode.childrenMatrix || [];
 
-    !matrix[row] ? (matrix[row] = []) : null; // якщо такого ряду ще не було створено, то встановимо початковий []
+    if (!matrix[row]) matrix[row] = []; // якщо такого ряду ще не було створено, то встановимо початковий []
     matrix[row][column] = node;
 
     this.nodes.set(parentId, {
@@ -218,7 +218,7 @@ class NavManager {
       this.hoistFocusToRightNeighbor(currentNode);
       return;
     }
-    matrix[row][column + 1] && this.setFocus(matrix[row][column + 1].id); // рухаємо фокус на сусіда з права
+    if (matrix[row][column + 1]) this.setFocus(matrix[row][column + 1].id); // рухаємо фокус на сусіда з права
   }
   hoistFocusToRightNeighbor(node: FocusableNodeConfig) {
     // якщо вперлись з права в крайній компонент на даному рівні,
@@ -235,7 +235,7 @@ class NavManager {
       return;
 
     const nextNeighbor = grandParent.childrenMatrix[parent.row][parent.column + 1];
-    nextNeighbor && this.setFocus(nextNeighbor.id);
+    if (nextNeighbor) this.setFocus(nextNeighbor.id);
   }
   handleLeftBtn(currentNode: FocusableNodeConfig) {
     const matrix = this.nodes.get(currentNode.parentId).childrenMatrix;
@@ -252,7 +252,7 @@ class NavManager {
       this.hoistFocusToLeftNeighbor(currentNode);
       return;
     }
-    matrix[row][column - 1] && this.setFocus(matrix[row][column - 1].id); // рухаємо фокус на сусіда з ліва
+    if (matrix[row][column - 1]) this.setFocus(matrix[row][column - 1].id); // рухаємо фокус на сусіда з ліва
   }
   hoistFocusToLeftNeighbor(node: FocusableNodeConfig) {
     // якщо вперлись зліва в крайній компонент на даному рівні,
@@ -269,7 +269,7 @@ class NavManager {
       return;
 
     const prevNeighbor = grandParent.childrenMatrix[parent.row][parent.column - 1];
-    prevNeighbor && this.setFocus(prevNeighbor.id);
+    if (prevNeighbor) this.setFocus(prevNeighbor.id);
   }
   handleTopBtn(currentNode: FocusableNodeConfig) {
     const matrix = this.nodes.get(currentNode.parentId).childrenMatrix;
@@ -286,7 +286,7 @@ class NavManager {
       this.hoistFocusToTopNeighbor(currentNode);
       return;
     }
-    matrix[row - 1][column] && this.setFocus(matrix[row - 1][column].id); // рухаємо фокус на сусіда знизу
+    if (matrix[row - 1][column]) this.setFocus(matrix[row - 1][column].id); // рухаємо фокус на сусіда знизу
   }
   hoistFocusToTopNeighbor(node: FocusableNodeConfig) {
     const parent = this.nodes.get(node.parentId);
@@ -308,7 +308,7 @@ class NavManager {
     }
 
     const prevNeighbor = prevRow?.[parent.column] || prevRow?.[0];
-    prevNeighbor && this.setFocus(prevNeighbor.id);
+    if (prevNeighbor) this.setFocus(prevNeighbor.id);
   }
   handleBottomBtn(currentNode: FocusableNodeConfig) {
     const matrix = this.nodes.get(currentNode.parentId).childrenMatrix;
@@ -325,7 +325,7 @@ class NavManager {
       this.hoistFocusToBottomNeighbor(currentNode);
       return;
     }
-    matrix[row + 1][column] && this.setFocus(matrix[row + 1][column].id); // рухаємо фокус на сусіда знизу
+    if (matrix[row + 1][column]) this.setFocus(matrix[row + 1][column].id); // рухаємо фокус на сусіда знизу
   }
   hoistFocusToBottomNeighbor(node: FocusableNodeConfig) {
     const parent = this.nodes.get(node.parentId);
@@ -337,6 +337,7 @@ class NavManager {
       grandParent?.stopHoistFocusFromBottom
     )
       return;
+
     const nextRow = grandParent.childrenMatrix[parent.row + 1];
 
     if (!nextRow) {
@@ -347,7 +348,7 @@ class NavManager {
 
     const nextNeighbor = nextRow?.[parent.column] || nextRow?.[0];
 
-    nextNeighbor && this.setFocus(nextNeighbor.id);
+    if (nextNeighbor) this.setFocus(nextNeighbor.id);
   }
 }
 

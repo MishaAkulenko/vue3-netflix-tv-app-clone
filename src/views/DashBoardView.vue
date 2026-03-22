@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import MovieSlide from '@/components/movies/MovieSlide.vue';
-import BaseSlider from '@/components/base/BaseSlider.vue';
+import DashboardSlider from '@/components/movies/DashboardSlider.vue';
 import MainBanner from '@/components/MainBanner.vue';
 
 import { type DashboardPayload, DashboardService } from '@/services/dashboardService.ts';
@@ -12,7 +11,8 @@ import { useRoute } from 'vue-router';
 
 import type { Grid } from '@/types/grid';
 import { storeToRefs } from 'pinia';
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, type ComponentPublicInstance } from 'vue';
+
 import BaseVerticalScrollList from '@/components/base/BaseVerticalScrollList.vue';
 
 const props = defineProps<{
@@ -22,13 +22,9 @@ const props = defineProps<{
 const route = useRoute();
 
 const { locale } = storeToRefs(useLocaleStore());
-const slides = ref<any[]>([]);
+const slides = ref<(ComponentPublicInstance | null)[]>([]);
 
-const {
-  isLoading,
-  data: categories,
-  isError
-} = useQuery({
+const { data: categories, isError } = useQuery({
   queryKey: computed(() => ['contentCategories', route.name, locale]),
   queryFn: () => {
     return DashboardService.fetchDashBoardList({
@@ -51,28 +47,28 @@ const { idForChildren, setInitFocus, resetChildren } = useFocus({
 watch(
   () => route.fullPath,
   () => {
-    resetChildren();
+    resetChildren(); // Очистимо childMatrix при зміні маршруту, щоб уникнути фокусування на неіснуючих елементах
   }
 );
 </script>
 
 <template>
   <main>
-    <div class="browse-list-wrapper" :key="route.fullPath">
+    <div :key="route.fullPath" class="browse-list-wrapper">
       <BaseVerticalScrollList :list="categories">
         <template #slotBeforeList="{ handleFocusedRow }">
           <MainBanner
-            @on-focus="handleFocusedRow(0, 0)"
             :grid="{ row: 0, column: 0, parentId: idForChildren }"
+            @on-focus="handleFocusedRow(0, 0)"
           />
         </template>
-        <template #default="{ listItem, index, handleFocusedRow }">
-          <BaseSlider
-            :ref="(el) => (slides[index] = el)"
+        <template #default="{ listItem, index, handleFocusedRow, onActiveRow }">
+          <DashboardSlider
+            :ref="(el) => (slides[index] = el as ComponentPublicInstance | null)"
             :grid="{ row: index + 1, column: 0, parentId: idForChildren }"
             :list="listItem.items"
             :title="listItem.category"
-            :slideComponent="MovieSlide"
+            :on-active-row="onActiveRow"
             @on-focus="handleFocusedRow(index + 1, slides[index]?.$el?.offsetTop)"
           />
         </template>

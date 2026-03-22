@@ -27,7 +27,7 @@ defineEmits<{
       @after-enter="$emit('after-enter')"
       @before-leave="$emit('before-leave')"
     >
-      <div class="description-text" v-show="showDescription">
+      <div v-show="showDescription" class="description-text">
         {{ banner.description }}
       </div>
     </transition>

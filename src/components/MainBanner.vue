@@ -64,7 +64,7 @@ const setSectionFirstBanner = () => {
 watch(bannersList, setSectionFirstBanner, { immediate: true });
 watch(route, setSectionFirstBanner);
 watch(hasFocusedChildren, (hasFocused) => {
-  hasFocused && emit('on-focus');
+  if (hasFocused) emit('on-focus');
 });
 </script>
 
@@ -76,11 +76,11 @@ watch(hasFocusedChildren, (hasFocused) => {
       :class="{ focused: isFocused || hasFocusedChildren, loading: isLoading }"
       @mouseenter="focusMe"
     >
-      <div class="main-banner-inner" v-if="currentBanner">
+      <div v-if="currentBanner" class="main-banner-inner">
         <transition name="fade">
           <img
-            class="banner-image"
             v-show="!trailerPlaying"
+            class="banner-image"
             :src="currentBanner.bannerImage"
             :alt="currentBanner.id"
           />
@@ -93,7 +93,7 @@ watch(hasFocusedChildren, (hasFocused) => {
             @after-enter="playTrailer"
             @before-leave="pauseTrailer"
           />
-          <div class="banner-actions" v-show="isFocused || hasFocusedChildren">
+          <div v-show="isFocused || hasFocusedChildren" class="banner-actions">
             <BaseButton
               class="banner-action-btn"
               :focus-on-hover="true"
@@ -115,7 +115,7 @@ watch(hasFocusedChildren, (hasFocused) => {
             </BaseButton>
           </div>
         </div>
-        <video class="banner-trailer" ref="videoRef" :src="currentBanner.trailer" />
+        <video ref="videoRef" class="banner-trailer" :src="currentBanner.trailer" />
       </div>
     </div>
   </transition>

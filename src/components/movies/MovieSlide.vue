@@ -6,7 +6,8 @@ import MovieTags from '@/components/movies/MovieTags.vue';
 import { useBackgroundStore } from '@/stores/backgroundStore.ts';
 
 const props = defineProps<{
-  grid: Grid;
+  hidden?: boolean;
+  hasDescription?: boolean;
   slideData: Movie;
 }>();
 
@@ -17,45 +18,40 @@ const emit = defineEmits<{
 const bgStore = useBackgroundStore();
 const { setFocusedSlideInfo, setSplashImage } = bgStore;
 
-const onEnter = () => {
-  console.log('onEnter', props.slideData.title);
-};
+// const onEnter = () => {
+//   console.log('onEnter', props.slideData.title);
+// };
 
-const handleMouseEnter = () => {
-  focusMe();
-};
+// const handleMouseEnter = () => {
+//   focusMe();
+// };
 const handleSlideFocus = (slideData: Movie) => {
   setFocusedSlideInfo(slideData);
   setSplashImage(slideData.splash);
 };
-const { isFocused, focusMe, setFocusOnHeader } = useFocus({
-  name: props.slideData.title,
-  row: props.grid.row,
-  column: props.grid.column,
-  parentId: props.grid.parentId,
-  afterFocusEnter() {
-    emit('on-focus', props.slideData);
-  },
-  onEnter: onEnter,
-  onBack: () => {
-    setFocusOnHeader();
-  }
-});
+// const { isFocused, focusMe, setFocusOnHeader } = useFocus({
+//   name: props.slideData.title,
+//   row: props.grid.row,
+//   column: props.grid.column,
+//   parentId: props.grid.parentId,
+//   afterFocusEnter() {
+//     emit('on-focus', props.slideData);
+//   },
+//   onEnter,
+//   onBack: () => {
+//     setFocusOnHeader();
+//   }
+// });
 </script>
 
 <template>
-  <div
-    class="movie-slide-wrapper"
-    :class="{ focused: isFocused }"
-    @mouseenter="handleMouseEnter"
-    @click="onEnter"
-  >
+  <div class="movie-slide-wrapper" :class="{ transparent: hidden }">
     <div class="poster-wrapper">
       <img class="logo" :src="slideData.logo" :alt="slideData.title" />
       <img class="poster" :src="slideData.splash" :alt="slideData.title" />
-      <div class="description" v-show="isFocused">
+      <div v-show="hasDescription" class="description">
         <MovieTags
-          v-show="isFocused"
+          v-show="hasDescription"
           :genre="slideData.genre"
           :year="slideData.year"
           :duration="slideData.duration"
@@ -95,7 +91,7 @@ const { isFocused, focusMe, setFocusOnHeader } = useFocus({
   }
 
   &:hover .poster-wrapper,
-  &.focused .poster-wrapper {
+  &.full-slide-size.focused .poster-wrapper {
     border: 0.2rem solid var(--color-border);
   }
 
@@ -120,8 +116,7 @@ const { isFocused, focusMe, setFocusOnHeader } = useFocus({
     font-size: 1.2rem;
     transform: translateY(110%);
   }
-
-  &.focused {
+  &.full-slide-size {
     .poster-wrapper {
       width: calc(100vw / 2);
     }
@@ -132,6 +127,11 @@ const { isFocused, focusMe, setFocusOnHeader } = useFocus({
       left: 2rem;
       transform: none;
     }
+  }
+  &.transparent {
+    opacity: 0;
+  }
+  &.full-slide-size {
   }
 }
 </style>

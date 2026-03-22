@@ -96,6 +96,10 @@ export default tseslint.config(
 
       // ─── JavaScript ───────────────────────────────────────────────────
 
+      // Вимикаємо no-undef, оскільки TypeScript сам перевіряє неіснуючі змінні,
+      // і ESLint часто помилково свариться на глобальні типи TS (як Window чи WheelEvent)
+      'no-undef': 'off',
+
       // console.log — попередження (warn і error дозволені)
       'no-console': ['warn', { allow: ['warn', 'error'] }],
 

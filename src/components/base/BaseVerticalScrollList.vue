@@ -18,7 +18,11 @@ const moveScroll = (top?: number) => {
   offsetTop.value = top ?? 0;
 };
 const handleMouseWheel = (e: WheelEvent) => {
-  e.deltaY > 0 ? moveFocusDown() : moveFocusUp();
+  if (e.deltaY > 0) {
+    moveFocusDown();
+  } else {
+    moveFocusUp();
+  }
 };
 </script>
 
@@ -29,19 +33,25 @@ const handleMouseWheel = (e: WheelEvent) => {
         class="scroll-list-row slot-before-list"
         :class="{ 'visible-row-active': focusedRow === 0 }"
       >
-        <slot name="slotBeforeList" :handleFocusedRow="handleFocusedRow"></slot>
+        <slot name="slotBeforeList" :handle-focused-row="handleFocusedRow"></slot>
       </div>
-      <div
-        class="scroll-list-row"
-        :class="{
-          'visible-row': focusedRow === index || focusedRow === index + 1,
-          'visible-row-active': focusedRow === index + 1
-        }"
-        v-if="list && list.length"
-        v-for="(item, index) in props.list"
-        :key="index"
-      >
-        <slot :listItem="item" :index="index as number" :handleFocusedRow="handleFocusedRow"></slot>
+      <div v-if="list && list.length">
+        <div
+          v-for="(item, index) in props.list"
+          :key="index"
+          class="scroll-list-row"
+          :class="{
+            'visible-row': focusedRow === index || focusedRow === index + 1,
+            'visible-row-active': focusedRow === index + 1
+          }"
+        >
+          <slot
+            :list-item="item"
+            :index="index as number"
+            :handle-focused-row="handleFocusedRow"
+            :on-active-row="focusedRow === index + 1"
+          ></slot>
+        </div>
       </div>
     </div>
   </div>
