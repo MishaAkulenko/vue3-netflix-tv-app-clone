@@ -63,6 +63,16 @@ const handleAnimationEnd = () => {
   }
 };
 
+const scrollRight = () => {
+  activeSlideIndex.value++;
+  scrollSlider(activeSlideIndex.value);
+};
+
+const scrollLeft = () => {
+  activeSlideIndex.value--;
+  scrollSlider(activeSlideIndex.value);
+};
+
 const { setFocusOnHeader, isFocused, focusMe } = useFocus({
   name: props.title,
   row: props.grid.row,
@@ -74,14 +84,8 @@ const { setFocusOnHeader, isFocused, focusMe } = useFocus({
   onBack() {
     setFocusOnHeader();
   },
-  onRight() {
-    activeSlideIndex.value++;
-    scrollSlider(activeSlideIndex.value);
-  },
-  onLeft() {
-    activeSlideIndex.value--;
-    scrollSlider(activeSlideIndex.value);
-  }
+  onRight: scrollRight,
+  onLeft: scrollLeft
 });
 onMounted(() => {
   resizeObserver = new ResizeObserver(() => {
@@ -105,6 +109,25 @@ onUnmounted(() => {
   >
     <div v-if="props.title" class="title">{{ title }}</div>
     <div class="viewport-wrapper" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
+      <div
+        v-show="activeSlideIndex !== 0"
+        class="slider-arrow arrow-left"
+        :class="{ 'is-visible': isHovering }"
+        @click.stop="scrollLeft"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" />
+        </svg>
+      </div>
+      <div
+        class="slider-arrow arrow-right"
+        :class="{ 'is-visible': isHovering }"
+        @click.stop="scrollRight"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+        </svg>
+      </div>
       <MovieSlide
         v-show="onActiveRow"
         :has-description="true"
@@ -156,6 +179,53 @@ onUnmounted(() => {
   transition: transform 0.3s ease;
   &.no-transition {
     transition: none;
+  }
+}
+
+.slider-arrow {
+  position: absolute;
+  top: calc(
+    min(100vw / 6 / 0.6, 100vh * 0.5) / 2 - var(--vt-c-page-side-padding)
+  ); // центруємо відносно середини постеру, а не середини слайду
+  bottom: 0;
+  width: var(--vt-c-page-side-padding);
+  height: calc(var(--vt-c-page-side-padding) * 2);
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  transition:
+    opacity 0.3s ease,
+    background 0.3s ease;
+  pointer-events: none;
+  svg {
+    width: 5rem;
+    opacity: 0.7;
+  }
+  &.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.8);
+    svg {
+      opacity: 1;
+    }
+  }
+
+  &.arrow-left {
+    left: 0;
+  }
+
+  &.arrow-right {
+    right: 0;
   }
 }
 </style>
