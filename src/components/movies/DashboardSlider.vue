@@ -16,12 +16,12 @@ const emit = defineEmits<{
   (e: 'on-focus'): void;
 }>();
 
+let resizeObserver: ResizeObserver | null = null;
 const transitionSuspended = ref(false);
 const isHovering = ref(false);
 const offsetFromLeft = ref(0);
 const rawIndex = ref(0);
 const slides = useTemplateRef('slides');
-let resiseObserver: ResizeObserver | null = null;
 const sliderWrapper = useTemplateRef('sliderWrapper');
 const listForBuild = ref(
   props.list.length < 6 ? props.list : [...props.list, ...props.list.slice().splice(0, 4)]
@@ -35,7 +35,7 @@ const activeSlideIndex = computed({
   set(num: number) {
     if (num < 0) {
       rawIndex.value = 0;
-    } else if (num > props.list.length) {
+    } else if (num >= props.list.length) {
       rawIndex.value = 0;
     } else {
       rawIndex.value = num;
@@ -84,15 +84,15 @@ const { setFocusOnHeader, isFocused, focusMe } = useFocus({
   }
 });
 onMounted(() => {
-  resiseObserver = new ResizeObserver(() => {
+  resizeObserver = new ResizeObserver(() => {
     scrollSlider(activeSlideIndex.value);
   });
   if (sliderWrapper.value) {
-    resiseObserver.observe(sliderWrapper.value);
+    resizeObserver.observe(sliderWrapper.value);
   }
 });
 onUnmounted(() => {
-  resiseObserver?.disconnect();
+  resizeObserver?.disconnect();
 });
 </script>
 

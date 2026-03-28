@@ -25,7 +25,7 @@ const { t } = useI18n();
   background: #000;
   display: none;
 
-  @media (max-width: 1279px) {
+  @media (max-width: 999px) {
     display: flex;
   }
 }
