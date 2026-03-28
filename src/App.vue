@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import TheHeader from '@/layouts/AppHeader.vue';
+import ResolutionStub from '@/components/ResolutionStub.vue';
 import { NavigationManager } from '@/plugins/NavigationManager.ts';
 import { getDefaultLocalisation } from '@/utils/helpers.ts';
 import { setHtmlAttribute } from '@/utils/helpers.ts';
@@ -27,6 +28,8 @@ onMounted(() => {
 <template>
   <TheHeader :grid="{ row: 0, column: 0, parentId: 'App' }" />
   <RouterView :grid="{ row: 1, column: 0, parentId: 'App' }" />
+
+  <ResolutionStub class="resolution-stub-overlay" />
 </template>
 
 <style lang="scss" scoped></style>
