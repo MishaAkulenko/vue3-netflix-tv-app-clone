@@ -19,7 +19,7 @@ const { t } = useI18n();
 .resolution-stub {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 9998;
   align-items: center;
   justify-content: center;
   background: #000;

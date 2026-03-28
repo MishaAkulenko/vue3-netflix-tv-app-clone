@@ -1,4 +1,4 @@
-export const DEFAULT_LOCALE = 'uk';
+export const DEFAULT_LOCALE = 'en';
 export const FALLBACK_LOCALE = 'en';
 export const LOCALES = ['uk', 'en'];
 export const DEFAULT_THEME = 'light';
