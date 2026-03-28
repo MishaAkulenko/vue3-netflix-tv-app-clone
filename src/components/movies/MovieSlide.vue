@@ -69,9 +69,11 @@ const handleSlideFocus = (slideData: Movie) => {
   cursor: pointer;
   position: relative;
   height: calc(100vw / 6 / 0.6 + 10rem);
+  max-height: calc(100vh * 0.7);
   .poster-wrapper {
     width: calc(100vw / 6);
     height: calc(100vw / 6 / 0.6);
+    max-height: calc(100vh * 0.5);
     border: 0.2rem solid transparent;
     position: relative;
     &::after {

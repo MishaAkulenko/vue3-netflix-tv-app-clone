@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, useTemplateRef } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
 import { useFocus } from '@/composables/useFocus.ts';
 import type { Grid } from '@/types/grid.ts';
 import MovieSlide from '@/components/movies/MovieSlide.vue';
@@ -21,6 +21,8 @@ const isHovering = ref(false);
 const offsetFromLeft = ref(0);
 const rawIndex = ref(0);
 const slides = useTemplateRef('slides');
+let resiseObserver: ResizeObserver | null = null;
+const sliderWrapper = useTemplateRef('sliderWrapper');
 const listForBuild = ref(
   props.list.length < 6 ? props.list : [...props.list, ...props.list.slice().splice(0, 4)]
 ); //Задля красивого нескінченного скроллу, 4 перших слайди продублюємо в кінець (якщо слайдів достатньо, щоб заповнити екран)
@@ -81,16 +83,28 @@ const { setFocusOnHeader, isFocused, focusMe } = useFocus({
     scrollSlider(activeSlideIndex.value);
   }
 });
+onMounted(() => {
+  resiseObserver = new ResizeObserver(() => {
+    scrollSlider(activeSlideIndex.value);
+  });
+  if (sliderWrapper.value) {
+    resiseObserver.observe(sliderWrapper.value);
+  }
+});
+onUnmounted(() => {
+  resiseObserver?.disconnect();
+});
 </script>
 
 <template>
-  <div class="base-slider" :class="{ 'active-row': onActiveRow }" @mouseenter="focusMe">
+  <div
+    ref="sliderWrapper"
+    class="base-slider"
+    :class="{ 'active-row': onActiveRow }"
+    @mouseenter="focusMe"
+  >
     <div v-if="props.title" class="title">{{ title }}</div>
-    <div
-      class="viewport-wrapper"
-      @mouseenter="isHovering = true"
-      @mouseleave="isHovering = false"
-    >
+    <div class="viewport-wrapper" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
       <MovieSlide
         v-show="onActiveRow"
         :has-description="true"

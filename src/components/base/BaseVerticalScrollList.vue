@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
 import { useFocusedMethods } from '@/composables/useFocus.ts';
 
 const props = defineProps<{
@@ -8,7 +8,10 @@ const props = defineProps<{
 
 const offsetTop = ref(0);
 const focusedRow = ref(0);
+const rows = useTemplateRef('row');
+const scrollListWrapper = useTemplateRef('scrollListWrapper');
 const { moveFocusDown, moveFocusUp } = useFocusedMethods();
+let resizeObserver: ResizeObserver | null = null;
 
 const handleFocusedRow = (index: number, top?: number) => {
   focusedRow.value = index;
@@ -24,10 +27,23 @@ const handleMouseWheel = (e: WheelEvent) => {
     moveFocusUp();
   }
 };
+onMounted(() => {
+  // при зміні роздільної здатності, перерахуємо відстань до активного рядку
+  resizeObserver = new ResizeObserver(() => {
+    const top = rows.value?.[focusedRow.value - 1]?.offsetTop ?? 0; // - 1 щоб урахувати банер, він також в списку але без рефа, там все одно буде 0
+    moveScroll(top);
+  });
+  if (scrollListWrapper.value) {
+    resizeObserver.observe(scrollListWrapper.value);
+  }
+});
+onUnmounted(() => {
+  resizeObserver?.disconnect();
+});
 </script>
 
 <template>
-  <div class="scroll-list-wrapper" @mousewheel="handleMouseWheel">
+  <div ref="scrollListWrapper" class="scroll-list-wrapper" @mousewheel="handleMouseWheel">
     <div class="scroll-list-inner" :style="{ transform: `translate3d(0, -${offsetTop}px, 0)` }">
       <div
         class="scroll-list-row slot-before-list"
@@ -39,9 +55,10 @@ const handleMouseWheel = (e: WheelEvent) => {
         <div
           v-for="(item, index) in props.list"
           :key="index"
+          ref="row"
           class="scroll-list-row"
           :class="{
-            'visible-row': focusedRow === index || focusedRow === index + 1,
+            'visible-row': focusedRow <= index + 2,
             'visible-row-active': focusedRow === index + 1
           }"
         >
