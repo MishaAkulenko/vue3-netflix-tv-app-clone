@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { ref } from 'vue';
 
 const { t } = useI18n();
+
+const isTouchDevice = ref(
+  typeof window !== 'undefined' && 
+  ('ontouchstart' in window || navigator.maxTouchPoints > 0)
+);
 </script>
 
 <template>
-  <div class="resolution-stub">
+  <div class="resolution-stub" :class="{ 'is-touch': isTouchDevice }">
     <div class="stub-content">
       <img class="full-logo" src="@/assets/img/full_logo.png" alt="netflix" />
       <h1 class="stub-title">{{ t('resolution-stub.title') }}</h1>
@@ -26,6 +32,10 @@ const { t } = useI18n();
   display: none;
 
   @media (max-width: 999px) {
+    display: flex;
+  }
+
+  &.is-touch {
     display: flex;
   }
 }
