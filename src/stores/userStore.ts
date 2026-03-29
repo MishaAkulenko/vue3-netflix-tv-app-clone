@@ -5,6 +5,7 @@ export const useUserStore = defineStore(
   'user',
   () => {
     const adultConfirmed = ref(false);
+    const hasSeenControlsHelp = ref(false);
 
     function confirmAdult() {
       adultConfirmed.value = true;
@@ -14,11 +15,15 @@ export const useUserStore = defineStore(
       adultConfirmed.value = false;
     }
 
-    return { adultConfirmed, confirmAdult, rejectAdult };
+    function confirmControlsHelp() {
+      hasSeenControlsHelp.value = true;
+    }
+
+    return { adultConfirmed, hasSeenControlsHelp, confirmAdult, rejectAdult, confirmControlsHelp };
   },
   {
     persist: {
-      pick: ['adultConfirmed']
+      pick: ['adultConfirmed', 'hasSeenControlsHelp']
     }
   }
 );

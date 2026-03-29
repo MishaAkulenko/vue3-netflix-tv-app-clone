@@ -20,5 +20,10 @@
   "my_netflix": {
     "continue_series": "Continue watching series",
     "continue_movies": "Continue watching movies"
+  },
+  "controls_help": {
+    "title": "Application Controls",
+    "description": "This application can be controlled using keyboard directional keys (Up, Down, Left, Right), Esc, and Enter, simulating a TV remote control. Standard mouse control is also fully supported.",
+    "ok": "OK"
   }
 }
