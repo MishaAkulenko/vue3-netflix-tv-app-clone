@@ -16,5 +16,9 @@
   "banner": {
     "watch": "Переглянути",
     "details": "Докладніше"
+  },
+  "my_netflix": {
+    "continue_series": "Продовжити перегляд серіалів",
+    "continue_movies": "Продовжити перегляд фільмів"
   }
 }

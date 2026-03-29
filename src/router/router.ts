@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useUserStore } from '@/stores/userStore.ts';
 import DashBoardView from '../views/DashBoardView.vue';
+import MyNetflixView from '../views/MyNetflixView.vue';
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -43,7 +44,7 @@ const router = createRouter({
       meta: {
         routePositionFromLeft: 3
       },
-      component: DashBoardView
+      component: MyNetflixView
     },
     {
       path: '/adult-check',

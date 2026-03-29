@@ -2,7 +2,7 @@ import { doRequest } from '@/services/apiClient.ts';
 import type { MoviesCategory } from '@/types/movies.d.ts';
 
 export interface DashboardPayload {
-  section?: 'string';
+  section?: string | undefined;
 }
 
 export const DashboardService = {

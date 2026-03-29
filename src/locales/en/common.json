@@ -16,5 +16,9 @@
   "banner": {
     "watch": "Watch",
     "details": "More info"
+  },
+  "my_netflix": {
+    "continue_series": "Continue watching series",
+    "continue_movies": "Continue watching movies"
   }
 }

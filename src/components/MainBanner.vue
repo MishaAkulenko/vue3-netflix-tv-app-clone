@@ -187,7 +187,8 @@ watch(hasFocusedChildren, (hasFocused) => {
   width: 33%;
 
   .title-logo {
-    width: 100%;
+    //width: 100%;
+    max-height: 40vh;
   }
 
   .banner-actions {
