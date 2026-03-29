@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import defaultAvatar from '@/assets/icons/profile/petro.png';
+import defaultAvatar from '@/assets/icons/profile/yoshi.png';
 import { useFocus } from '@/composables/useFocus.ts';
 import type { Grid } from '@/types/grid.ts';
 import { useRouter } from 'vue-router';
@@ -50,7 +50,7 @@ watch(hasFocusedChildren, (hasFocusedChildren) => {
       @on-enter="openMenu"
       @on-back="closeMenu"
     />
-    <div class="options-list" v-show="isOpen">
+    <div v-show="isOpen" class="options-list">
       <BaseButton
         class="menu-btn"
         :grid="{ row: 1, column: 0, parentId: idForChildren }"
@@ -136,7 +136,8 @@ watch(hasFocusedChildren, (hasFocusedChildren) => {
   height: var(--vt-c-header-icons-heiht);
   position: relative;
   background-position: center;
-  background-size: cover;
+  background-size: contain;
+  background-repeat: no-repeat;
   transition: none;
   &::after {
     content: '';
