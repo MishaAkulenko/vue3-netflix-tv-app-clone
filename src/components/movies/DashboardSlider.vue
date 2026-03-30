@@ -129,7 +129,8 @@ onUnmounted(() => {
         </svg>
       </div>
       <MovieSlide
-        v-show="onActiveRow"
+        v-if="onActiveRow"
+        :whith-trailer="onActiveRow"
         :has-description="true"
         :slide-data="listForBuild[activeSlideIndex]!"
         :class="{ focused: isFocused && !isHovering }"

@@ -1,54 +1,53 @@
 <script setup lang="ts">
 import type { Movie } from '@/types/movies';
-import type { Grid } from '@/types/grid.ts';
-import { useFocus } from '@/composables/useFocus.ts';
 import MovieTags from '@/components/movies/MovieTags.vue';
-import { useBackgroundStore } from '@/stores/backgroundStore.ts';
+import VideoPlayer from '@/components/movies/VideoPlayer.vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps<{
+  slideData: Movie;
   hidden?: boolean;
   hasDescription?: boolean;
-  slideData: Movie;
+  whithTrailer?: boolean;
 }>();
 
-const emit = defineEmits<{
-  (e: 'on-focus', value: Movie): void;
-}>();
+const canPlay = ref(false);
+const videoRef = ref<InstanceType<typeof VideoPlayer>>();
+const trailerLink = ref('');
+let playTimeout: ReturnType<typeof setTimeout>;
 
-const bgStore = useBackgroundStore();
-const { setFocusedSlideInfo, setSplashImage } = bgStore;
+watch(
+  () => props.slideData,
+  () => {
+    if (!props.whithTrailer) return;
 
-// const onEnter = () => {
-//   console.log('onEnter', props.slideData.title);
-// };
-
-// const handleMouseEnter = () => {
-//   focusMe();
-// };
-const handleSlideFocus = (slideData: Movie) => {
-  setFocusedSlideInfo(slideData);
-  setSplashImage(slideData.splash);
-};
-// const { isFocused, focusMe, setFocusOnHeader } = useFocus({
-//   name: props.slideData.title,
-//   row: props.grid.row,
-//   column: props.grid.column,
-//   parentId: props.grid.parentId,
-//   afterFocusEnter() {
-//     emit('on-focus', props.slideData);
-//   },
-//   onEnter,
-//   onBack: () => {
-//     setFocusOnHeader();
-//   }
-// });
+    clearTimeout(playTimeout);
+    videoRef.value?.init();
+    canPlay.value = false;
+    // trailerLink.value = '';
+    playTimeout = setTimeout(() => {
+      // trailerLink.value = props.slideData.trailer;
+      canPlay.value = true;
+      videoRef.value?.play();
+    }, 2000);
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
   <div class="movie-slide-wrapper" :class="{ transparent: hidden }">
     <div class="poster-wrapper">
       <img class="logo" :src="slideData.logo" :alt="slideData.title" />
-      <img class="poster" :src="slideData.splash" :alt="slideData.title" />
+      <transition name="fade">
+        <img
+          v-show="!canPlay || !whithTrailer"
+          class="poster"
+          :src="slideData.splash"
+          :alt="slideData.title"
+        />
+      </transition>
+      <VideoPlayer v-if="whithTrailer" ref="videoRef" :src="slideData.trailer"></VideoPlayer>
       <div v-show="hasDescription" class="description">
         <MovieTags
           v-show="hasDescription"
@@ -98,6 +97,17 @@ const handleSlideFocus = (slideData: Movie) => {
   }
 
   .poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    position: relative;
+  }
+  video {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;

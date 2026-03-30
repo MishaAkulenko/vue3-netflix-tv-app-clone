@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import BaseButton from '@/components/base/BaseButton.vue';
 import BannerInfo from '@/components/movies/BannerInfo.vue';
+import VideoPlayer from '@/components/movies/VideoPlayer.vue';
 
 import { useFocus } from '@/composables/useFocus.ts';
 import type { Grid } from '@/types/grid.ts';
@@ -25,7 +26,7 @@ const { t } = useI18n();
 
 const currentBanner = ref<Banner | null>(null);
 const trailerPlaying = ref(false);
-const videoRef = ref<HTMLVideoElement>();
+const videoRef = ref<InstanceType<typeof VideoPlayer>>();
 
 const { isLoading, data: bannersList } = useQuery({
   queryKey: ['banners', locale],
@@ -115,7 +116,7 @@ watch(hasFocusedChildren, (hasFocused) => {
             </BaseButton>
           </div>
         </div>
-        <video ref="videoRef" class="banner-trailer" :src="currentBanner.trailer" />
+        <VideoPlayer ref="videoRef" class="banner-trailer" :src="currentBanner.trailer" />
       </div>
     </div>
   </transition>
