@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, computed, useId } from 'vue';
+import { onMounted, onUnmounted, computed, useId, provide, inject } from 'vue';
 import {
   NavigationManager,
   type FocusableNode,
@@ -9,13 +9,23 @@ type InitGrid = {
   row?: number;
   column?: number;
 };
-
+const FOCUS_PARENT_KEY = Symbol('focusParentId');
 export function useFocus(config: FocusableNodeConfig) {
+  // config.id передавати у випадку коли потрібно точно знати його, щоб примусово туди можна було встановити фокус(наприклад хідер), решта генеруються унікальні
   const uniqId = config.id ?? useId(); // Якщо config.id є, то використовуємо його, якщо ні то генеруємо унікальний автоматично
+  const injectedParentId = inject(FOCUS_PARENT_KEY, 'App'); // App - це корневий компонент, якщо FOCUS_PARENT_KEY був undefined
+
+  const parentId = config.isOverlay
+    ? NavigationManager.getLastFocusLayerId() // для нового рівню фокусу створимо нову площину нод яка є корневою і самостійною сама навколо себе
+    : injectedParentId;
+
   const focusedParams: FocusableNode = {
     ...config,
+    parentId,
     id: uniqId
   };
+
+  provide(FOCUS_PARENT_KEY, uniqId); // стаємо батьком внутрішнім компонентам, вони отримають цей id через injectedParentId
 
   const resetChildren = () => NavigationManager.resetChildren(focusedParams.id);
   const isFocused = computed(() => NavigationManager.currentFocusId.value === focusedParams.id);
@@ -32,7 +42,8 @@ export function useFocus(config: FocusableNodeConfig) {
 
   const setFocusOnFirstChild = () => NavigationManager.setFocusOnFirstChild(focusedParams); //focusedParams зберігає контекст
   const getChildrenList = () => NavigationManager.getChildrenList(focusedParams.id); //повертає список дочірніх компонентів, які зареєстровані в менеджері, для поточного компонента
-
+  const setFocusOnNewLayer = (id: string) => NavigationManager.setFocusOnNewLayer(id); //створює новий шар фокусу, який буде над поточним, і встановлює фокус на вказаний id
+  const goBackToPreviousFocusLayer = () => NavigationManager.goBackToPreviousFocusLayer(); //створює новий шар фокусу, який буде над поточним, і встановлює фокус на вказаний id
   onMounted(() => {
     // Коли компонент з'являється на екрані, він повідомляє менеджера про себе
     // і передає свої локальні функції
@@ -54,7 +65,9 @@ export function useFocus(config: FocusableNodeConfig) {
     getChildrenList,
     setFocusOnHeader,
     hasFocusedChildren,
-    setFocusOnFirstChild
+    setFocusOnNewLayer,
+    setFocusOnFirstChild,
+    goBackToPreviousFocusLayer
   };
 }
 

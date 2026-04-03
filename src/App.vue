@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import TheHeader from '@/layouts/AppHeader.vue';
 import StartScreen from '@/components/StartScreen.vue';
-import ResolutionStub from '@/components/ResolutionStub.vue';
-import ControlsHelpOverlay from '@/components/ControlsHelpOverlay.vue';
+import ResolutionStub from '@/layouts/ResolutionStub.vue';
+import ControlsHelpOverlay from '@/layouts/ControlsHelpOverlay.vue';
 import { NavigationManager } from '@/plugins/NavigationManager.ts';
 import { getDefaultLocalisation } from '@/utils/helpers.ts';
 import { setHtmlAttribute } from '@/utils/helpers.ts';
@@ -31,10 +31,10 @@ onMounted(() => {
 
 <template>
   <StartScreen />
-  <TheHeader :grid="{ row: 0, column: 0, parentId: 'App' }" />
-  <RouterView :grid="{ row: 1, column: 0, parentId: 'App' }" />
+  <TheHeader :grid="{ row: 0, column: 0 }" />
+  <RouterView :grid="{ row: 1, column: 0 }" />
   <ResolutionStub class="resolution-stub-overlay" />
-  <ControlsHelpOverlay v-if="!userStore.hasSeenControlsHelp" :grid="{ row: 2, column: 0, parentId: 'App' }" />
+  <ControlsHelpOverlay v-if="!userStore.hasSeenControlsHelp" :grid="{ row: 2, column: 0 }" />
 </template>
 
 <style lang="scss" scoped></style>

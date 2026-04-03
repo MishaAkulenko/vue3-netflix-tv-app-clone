@@ -1,5 +1,4 @@
 export interface Grid {
-  parentId: string;
   row: number;
   column: number;
   // rows?: number[]; // [1,2,3] - на майбутнє можна додати підтримку великих компонентів

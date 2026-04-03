@@ -1,9 +1,9 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T">
 import { onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
 import { useFocusedMethods } from '@/composables/useFocus.ts';
 
 const props = defineProps<{
-  list?: any[];
+  list?: T[];
 }>();
 
 const offsetTop = ref(0);

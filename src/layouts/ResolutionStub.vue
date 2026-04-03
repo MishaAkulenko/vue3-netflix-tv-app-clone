@@ -5,15 +5,14 @@ import { ref } from 'vue';
 const { t } = useI18n();
 
 const isTouchDevice = ref(
-  typeof window !== 'undefined' && 
-  ('ontouchstart' in window || navigator.maxTouchPoints > 0)
+  typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0)
 );
 </script>
 
 <template>
   <div class="resolution-stub" :class="{ 'is-touch': isTouchDevice }">
     <div class="stub-content">
-      <img class="full-logo" src="@/assets/img/full_logo.png" alt="netflix" />
+      <img class="full-logo" src="../assets/img/full_logo.png" alt="netflix" />
       <h1 class="stub-title">{{ t('resolution-stub.title') }}</h1>
       <p class="stub-description">{{ t('resolution-stub.description') }}</p>
       <button class="stub-button">{{ t('resolution-stub.open_button') }}</button>

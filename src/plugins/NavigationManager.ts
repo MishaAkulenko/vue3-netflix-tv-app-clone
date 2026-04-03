@@ -4,10 +4,11 @@ import { APP_HEADER_ID } from '@/constants/globalConst.ts';
 export interface FocusableNodeConfig {
   id?: string;
   name?: string; // це чисто для відладки, щоб зручно було розуміти що за компонент, туди бажано тайтл передавати, чи аналогічну піпл рід френдлі інформацію
-  parentId: string;
+  parentId?: string;
   row: number;
   column: number;
   cantTakeFocus?: boolean;
+  isOverlay?: boolean;
   stopHoistFocusFromLeft?: boolean;
   stopHoistFocusFromRight?: boolean;
   stopHoistFocusFromTop?: boolean;
@@ -32,11 +33,14 @@ type initFocusParams = {
   row: number;
   column: number;
 };
-
+type focusLayer = {
+  lastFocusedOnPreviousLayer: FocusableNode;
+};
 class NavManager {
   // nodes = reactive<Map<string, FocusableNode>>(new Map());
   private nodes = new Map();
   private initFocusParams: initFocusParams | null = null;
+  focusLayers: focusLayer[] = [];
   parentsOfFocusedNode = ref<Set<string>>(new Set());
   currentFocusId = ref<string | null>(null);
 
@@ -139,7 +143,25 @@ class NavManager {
       this.setFocus(needfulChild.id);
     }
   }
+  getLastFocusLayerId() {
+    return `Overlay[${this.focusLayers.length}]`;
+  }
+  setFocusOnNewLayer(id: string) {
+    this.focusLayers.push({ lastFocusedOnPreviousLayer: this.getFocusedNode() });
+    this.setFocus(id);
+  }
+  goBackToPreviousFocusLayer() {
+    if (!this.focusLayers.length) return;
+    const lastFocusedOnPreviousLayer = this.focusLayers.pop()?.lastFocusedOnPreviousLayer;
+    const focusLayerId = this.getLastFocusLayerId();
 
+    if (lastFocusedOnPreviousLayer) {
+      this.setFocus(lastFocusedOnPreviousLayer.id);
+      this.nodes.delete(focusLayerId);
+    } else if (import.meta.env.DEV) {
+      console.warn('No previous layer to focus on');
+    }
+  }
   fillParentsOfFocusedNode() {
     const newParents = new Set<string>();
     const addParent = (node: FocusableNode) => {

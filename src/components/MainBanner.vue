@@ -2,6 +2,7 @@
 import BaseButton from '@/components/base/BaseButton.vue';
 import BannerInfo from '@/components/movies/BannerInfo.vue';
 import VideoPlayer from '@/components/movies/VideoPlayer.vue';
+import MovieCardOverlay from '@/layouts/MovieCardOverlay.vue';
 
 import { useFocus } from '@/composables/useFocus.ts';
 import type { Grid } from '@/types/grid.ts';
@@ -26,22 +27,13 @@ const { t } = useI18n();
 
 const currentBanner = ref<Banner | null>(null);
 const trailerPlaying = ref(false);
+const overlayIsOpen = ref(false);
 const videoRef = ref<InstanceType<typeof VideoPlayer>>();
 
 const { isLoading, data: bannersList } = useQuery({
   queryKey: ['banners', locale],
   queryFn: BannersService.fetchBanners,
   staleTime: 60 * 1000 // повторний запит з тими ж параметрами раз на хвилину максимум
-});
-
-const { isFocused, focusMe, idForChildren, setInitFocus, hasFocusedChildren } = useFocus({
-  id: `MainBanner`,
-  row: props.grid.row,
-  column: props.grid.column,
-  parentId: props.grid.parentId,
-  afterFocusEnter() {
-    setInitFocus();
-  }
 });
 
 const playTrailer = () => {
@@ -54,13 +46,28 @@ const pauseTrailer = () => {
   trailerPlaying.value = false;
 };
 
-const showMovieInfoOverlay = () => {};
+const showMovieInfoOverlay = () => {
+  overlayIsOpen.value = true;
+};
+const closeMovieInfoOverlay = () => {
+  overlayIsOpen.value = false;
+};
 
 const setSectionFirstBanner = () => {
   if (!bannersList?.value?.length) return;
   const initBanner = bannersList?.value.find(({ section }) => section === route.name);
   currentBanner.value = initBanner ?? bannersList?.value?.[0] ?? null;
 };
+
+const { isFocused, focusMe, idForChildren, setInitFocus, hasFocusedChildren } = useFocus({
+  id: `MainBanner`,
+  row: props.grid.row,
+  column: props.grid.column,
+  parentId: props.grid.parentId,
+  afterFocusEnter() {
+    setInitFocus();
+  }
+});
 
 watch(bannersList, setSectionFirstBanner, { immediate: true });
 watch(route, setSectionFirstBanner);
@@ -70,12 +77,14 @@ watch(hasFocusedChildren, (hasFocused) => {
 </script>
 
 <template>
+  <MovieCardOverlay v-if="overlayIsOpen" @close="closeMovieInfoOverlay" />
   <transition :name="route.meta.routeAnimation" mode="out-in" appear>
     <div
       :key="route.name"
       class="main-banner"
       :class="{ focused: isFocused || hasFocusedChildren, loading: isLoading }"
       @mouseenter="focusMe"
+      @click="showMovieInfoOverlay"
     >
       <div v-if="currentBanner" class="main-banner-inner">
         <transition name="fade">
