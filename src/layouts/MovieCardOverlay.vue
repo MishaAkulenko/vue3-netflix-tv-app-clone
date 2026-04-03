@@ -108,7 +108,7 @@ onBeforeUnmount(() => {
     top: 0;
     left: 0;
     z-index: 0;
-    video {
+    :deep(video) {
       width: 100%;
       height: 100%;
       position: absolute;
