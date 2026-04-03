@@ -24,7 +24,7 @@ const closeMenu = () => {
 const openMenu = () => (isOpen.value = true);
 
 const { hasFocusedChildren, setInitFocus, setFocusOnFirstChild } = useFocus({
-  id: `HeaderProfileMenu`,
+  name: 'HeaderProfileMenu',
   row: props.grid.row,
   column: props.grid.column,
   stopHoistFocusFromBottom: true,

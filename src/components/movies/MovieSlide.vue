@@ -8,25 +8,23 @@ const props = defineProps<{
   slideData: Movie;
   hidden?: boolean;
   hasDescription?: boolean;
-  whithTrailer?: boolean;
+  withTrailer?: boolean;
 }>();
 
 const canPlay = ref(false);
 const videoRef = ref<InstanceType<typeof VideoPlayer>>();
-const trailerLink = ref('');
+
 let playTimeout: ReturnType<typeof setTimeout>;
 
 watch(
   () => props.slideData,
   () => {
-    if (!props.whithTrailer) return;
+    if (!props.withTrailer) return;
 
     clearTimeout(playTimeout);
     videoRef.value?.init();
     canPlay.value = false;
-    // trailerLink.value = '';
     playTimeout = setTimeout(() => {
-      // trailerLink.value = props.slideData.trailer;
       canPlay.value = true;
       videoRef.value?.play();
     }, 2000);
@@ -41,13 +39,13 @@ watch(
       <img class="logo" :src="slideData.logo" :alt="slideData.title" />
       <transition name="fade">
         <img
-          v-show="!canPlay || !whithTrailer"
+          v-show="!canPlay || !withTrailer"
           class="poster"
           :src="slideData.splash"
           :alt="slideData.title"
         />
       </transition>
-      <VideoPlayer v-if="whithTrailer" ref="videoRef" :src="slideData.trailer"></VideoPlayer>
+      <VideoPlayer v-if="withTrailer" ref="videoRef" :src="slideData.trailer"></VideoPlayer>
       <div v-show="hasDescription" class="description">
         <MovieTags
           v-show="hasDescription"

@@ -373,6 +373,20 @@ class NavManager {
 
     if (nextNeighbor) this.setFocus(nextNeighbor.id);
   }
+  logNodes() {
+    if (!import.meta.env.DEV) return;
+    console.log(
+      'NODES: ',
+      Array.from(this.nodes.values()).map((node) => {
+        // для кращої наочності, краще видно імена компонентів
+        return {
+          name: node.name,
+          children: node.childrenMatrix,
+          node: node
+        };
+      })
+    );
+  }
 }
 
 export const NavigationManager = new NavManager();

@@ -9,7 +9,7 @@ const props = defineProps<{
 }>();
 
 const { setInitFocus, focusMe } = useFocus({
-  id: `LocaleSwitcher`,
+  name: 'LocaleSwitcher',
   row: props.grid.row,
   column: props.grid.column,
   afterFocusEnter() {

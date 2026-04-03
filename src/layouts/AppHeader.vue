@@ -29,6 +29,7 @@ const getInitColumn = () => {
 
 const { setInitFocus, isFocused, hasFocusedChildren } = useFocus({
   id: APP_HEADER_ID,
+  name: APP_HEADER_ID,
   row: props.grid.row,
   column: props.grid.column,
   afterFocusEnter() {

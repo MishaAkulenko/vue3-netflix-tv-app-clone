@@ -60,7 +60,7 @@ const setSectionFirstBanner = () => {
 };
 
 const { isFocused, focusMe, setInitFocus, hasFocusedChildren } = useFocus({
-  id: `MainBanner`,
+  name: 'MainBanner',
   row: props.grid.row,
   column: props.grid.column,
   afterFocusEnter() {

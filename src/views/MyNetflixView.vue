@@ -44,7 +44,7 @@ const categories = computed(() => {
 });
 
 const { setInitFocus } = useFocus({
-  id: `MyNetflixView`,
+  name: 'MyNetflixView',
   row: props.grid.row,
   column: props.grid.column,
   afterFocusEnter() {

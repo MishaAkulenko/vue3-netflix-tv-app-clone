@@ -16,6 +16,7 @@ const emit = defineEmits<{
 }>();
 
 const { isFocused, focusMe } = useFocus({
+  name: `BaseButton`,
   row: props.grid.row,
   column: props.grid.column,
   onEnter() {

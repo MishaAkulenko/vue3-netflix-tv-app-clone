@@ -74,7 +74,7 @@ const scrollLeft = () => {
 };
 
 const { setFocusOnHeader, isFocused, focusMe } = useFocus({
-  name: props.title,
+  name: `DashboardSlider: ${props.title}`,
   row: props.grid.row,
   column: props.grid.column,
   afterFocusEnter() {
@@ -129,7 +129,7 @@ onUnmounted(() => {
       </div>
       <MovieSlide
         v-if="onActiveRow"
-        :whith-trailer="onActiveRow"
+        :with-trailer="onActiveRow"
         :has-description="true"
         :slide-data="listForBuild[activeSlideIndex]!"
         :class="{ focused: isFocused && !isHovering }"

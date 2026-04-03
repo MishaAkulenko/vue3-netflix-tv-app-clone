@@ -13,7 +13,7 @@ const props = defineProps<{
 }>();
 
 const { isFocused, focusMe } = useFocus({
-  id: `ThemeSwitcher`,
+  name: 'ThemeSwitcher',
   row: props.grid.row,
   column: props.grid.column,
   onEnter: () => {

@@ -35,7 +35,7 @@ const { data: categories } = useQuery({
 });
 
 const { setInitFocus, resetChildren } = useFocus({
-  id: `DashBoardView`,
+  name: 'DashBoardView',
   row: props.grid.row,
   column: props.grid.column,
   afterFocusEnter() {

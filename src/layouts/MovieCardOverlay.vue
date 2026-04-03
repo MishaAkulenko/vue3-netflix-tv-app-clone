@@ -5,7 +5,7 @@ const emit = defineEmits<{
   (e: 'close'): void;
 }>();
 const { setFocusOnNewLayer, goBackToPreviousFocusLayer } = useFocus({
-  id: 'MovieCardOverlay',
+  name: 'MovieCardOverlay',
   isOverlay: true,
   row: 0,
   column: 0,
