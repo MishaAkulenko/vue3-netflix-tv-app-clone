@@ -26,6 +26,7 @@ export interface FocusableNodeConfig {
 
 export interface FocusableNode extends FocusableNodeConfig {
   id: string;
+  parentId: string;
   childrenMatrix?: FocusableNodeConfig[][];
 }
 type initFocusParams = {

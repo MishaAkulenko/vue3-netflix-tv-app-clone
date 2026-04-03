@@ -27,11 +27,10 @@ const getInitColumn = () => {
   return routes.findIndex((r) => r === route.fullPath);
 };
 
-const { setInitFocus, idForChildren, isFocused, hasFocusedChildren } = useFocus({
+const { setInitFocus, isFocused, hasFocusedChildren } = useFocus({
   id: APP_HEADER_ID,
   row: props.grid.row,
   column: props.grid.column,
-  parentId: props.grid.parentId,
   afterFocusEnter() {
     setInitFocus();
   }
@@ -43,14 +42,14 @@ setInitFocus({ column: getInitColumn() }); // самий початковий ф
 <template>
   <header class="app-header">
     <div class="header-left">
-      <HeaderProfileMenu :grid="{ row: 0, column: 0, parentId: idForChildren }" />
+      <HeaderProfileMenu :grid="{ row: 0, column: 0 }" />
     </div>
 
     <nav class="header-center">
       <BaseButton
         class="nav-btn"
         :class="{ active: route.path === '/' && !headerHasFocus }"
-        :grid="{ row: 0, column: 1, parentId: idForChildren }"
+        :grid="{ row: 0, column: 1 }"
         :focus-on-hover="true"
         @on-enter="navigateTo('/')"
         @click="navigateTo('/')"
@@ -60,7 +59,7 @@ setInitFocus({ column: getInitColumn() }); // самий початковий ф
       <BaseButton
         class="nav-btn"
         :class="{ active: route.path === '/series' && !headerHasFocus }"
-        :grid="{ row: 0, column: 2, parentId: idForChildren }"
+        :grid="{ row: 0, column: 2 }"
         :focus-on-hover="true"
         @on-enter="navigateTo('/series')"
         @click="navigateTo('/series')"
@@ -70,7 +69,7 @@ setInitFocus({ column: getInitColumn() }); // самий початковий ф
       <BaseButton
         class="nav-btn"
         :class="{ active: route.path === '/movies' && !headerHasFocus }"
-        :grid="{ row: 0, column: 3, parentId: idForChildren }"
+        :grid="{ row: 0, column: 3 }"
         :focus-on-hover="true"
         @on-enter="navigateTo('/movies')"
         @click="navigateTo('/movies')"
@@ -80,7 +79,7 @@ setInitFocus({ column: getInitColumn() }); // самий початковий ф
       <BaseButton
         class="nav-btn"
         :class="{ active: route.path === '/my-netflix' && !headerHasFocus }"
-        :grid="{ row: 0, column: 4, parentId: idForChildren }"
+        :grid="{ row: 0, column: 4 }"
         :focus-on-hover="true"
         @on-enter="navigateTo('/my-netflix')"
         @click="navigateTo('/my-netflix')"

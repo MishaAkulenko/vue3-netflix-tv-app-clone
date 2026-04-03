@@ -43,9 +43,8 @@ const categories = computed(() => {
   }));
 });
 
-const { idForChildren, setInitFocus } = useFocus({
+const { setInitFocus } = useFocus({
   id: `MyNetflixView`,
-  parentId: props.grid.parentId,
   row: props.grid.row,
   column: props.grid.column,
   afterFocusEnter() {
@@ -61,7 +60,7 @@ const { idForChildren, setInitFocus } = useFocus({
         <template #default="{ listItem, index, handleFocusedRow, onActiveRow }">
           <DashboardSlider
             :ref="(el) => (slides[index] = el as ComponentPublicInstance | null)"
-            :grid="{ row: index + 1, column: 0, parentId: idForChildren }"
+            :grid="{ row: index + 1, column: 0 }"
             :list="listItem.items"
             :title="listItem.category"
             :on-active-row="onActiveRow"

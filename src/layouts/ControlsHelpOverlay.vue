@@ -15,7 +15,6 @@ const userStore = useUserStore();
 const { isFocused, focusMe, setFocusOnHeader } = useFocus({
   row: props.grid.row,
   column: props.grid.column,
-  parentId: props.grid.parentId,
   onEnter() {
     closeOverlay();
   }

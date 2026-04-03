@@ -42,7 +42,7 @@ export function useFocus(config: FocusableNodeConfig) {
 
   const setFocusOnFirstChild = () => NavigationManager.setFocusOnFirstChild(focusedParams); //focusedParams зберігає контекст
   const getChildrenList = () => NavigationManager.getChildrenList(focusedParams.id); //повертає список дочірніх компонентів, які зареєстровані в менеджері, для поточного компонента
-  const setFocusOnNewLayer = (id: string) => NavigationManager.setFocusOnNewLayer(id); //створює новий шар фокусу, який буде над поточним, і встановлює фокус на вказаний id
+  const setFocusOnNewLayer = (id: string = uniqId) => NavigationManager.setFocusOnNewLayer(id); //створює новий шар фокусу, який буде над поточним, і встановлює фокус на вказаний id
   const goBackToPreviousFocusLayer = () => NavigationManager.goBackToPreviousFocusLayer(); //створює новий шар фокусу, який буде над поточним, і встановлює фокус на вказаний id
   onMounted(() => {
     // Коли компонент з'являється на екрані, він повідомляє менеджера про себе
@@ -57,7 +57,6 @@ export function useFocus(config: FocusableNodeConfig) {
   });
 
   return {
-    idForChildren: uniqId, //id цього компонента буде parentId для дочірніх компонентів, захист від різних неймінгів
     focusMe,
     isFocused,
     setInitFocus,
@@ -66,6 +65,7 @@ export function useFocus(config: FocusableNodeConfig) {
     setFocusOnHeader,
     hasFocusedChildren,
     setFocusOnNewLayer,
+    componentId: uniqId,
     setFocusOnFirstChild,
     goBackToPreviousFocusLayer
   };

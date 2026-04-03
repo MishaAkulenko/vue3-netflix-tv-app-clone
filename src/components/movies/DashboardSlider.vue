@@ -77,7 +77,6 @@ const { setFocusOnHeader, isFocused, focusMe } = useFocus({
   name: props.title,
   row: props.grid.row,
   column: props.grid.column,
-  parentId: props.grid.parentId,
   afterFocusEnter() {
     emit('on-focus');
   },

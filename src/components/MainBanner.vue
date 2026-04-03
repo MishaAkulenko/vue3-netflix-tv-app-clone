@@ -59,11 +59,10 @@ const setSectionFirstBanner = () => {
   currentBanner.value = initBanner ?? bannersList?.value?.[0] ?? null;
 };
 
-const { isFocused, focusMe, idForChildren, setInitFocus, hasFocusedChildren } = useFocus({
+const { isFocused, focusMe, setInitFocus, hasFocusedChildren } = useFocus({
   id: `MainBanner`,
   row: props.grid.row,
   column: props.grid.column,
-  parentId: props.grid.parentId,
   afterFocusEnter() {
     setInitFocus();
   }
@@ -108,7 +107,7 @@ watch(hasFocusedChildren, (hasFocused) => {
               class="banner-action-btn"
               :focus-on-hover="true"
               :payload="currentBanner"
-              :grid="{ row: 0, column: 0, parentId: idForChildren }"
+              :grid="{ row: 0, column: 0 }"
               @on-enter="showMovieInfoOverlay"
             >
               <span class="banner-action-icon-play"></span>
@@ -118,7 +117,7 @@ watch(hasFocusedChildren, (hasFocused) => {
               class="banner-action-btn"
               :focus-on-hover="true"
               :payload="currentBanner"
-              :grid="{ row: 0, column: 1, parentId: idForChildren }"
+              :grid="{ row: 0, column: 1 }"
               @on-enter="showMovieInfoOverlay"
             >
               {{ t('common.banner.details') }}

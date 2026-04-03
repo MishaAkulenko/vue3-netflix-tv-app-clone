@@ -16,7 +16,6 @@ const { isFocused, focusMe } = useFocus({
   id: `ThemeSwitcher`,
   row: props.grid.row,
   column: props.grid.column,
-  parentId: props.grid.parentId,
   onEnter: () => {
     styleStore.toggleTheme();
   },

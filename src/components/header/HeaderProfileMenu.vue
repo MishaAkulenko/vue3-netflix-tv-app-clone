@@ -23,11 +23,10 @@ const closeMenu = () => {
 };
 const openMenu = () => (isOpen.value = true);
 
-const { hasFocusedChildren, idForChildren, setInitFocus, setFocusOnFirstChild } = useFocus({
+const { hasFocusedChildren, setInitFocus, setFocusOnFirstChild } = useFocus({
   id: `HeaderProfileMenu`,
   row: props.grid.row,
   column: props.grid.column,
-  parentId: props.grid.parentId,
   stopHoistFocusFromBottom: true,
   afterFocusEnter() {
     setInitFocus();
@@ -44,7 +43,7 @@ watch(hasFocusedChildren, (hasFocusedChildren) => {
     <BaseButton
       class="header-profile-avatar"
       :class="{ 'menu-opened': isOpen }"
-      :grid="{ row: 0, column: 0, parentId: idForChildren }"
+      :grid="{ row: 0, column: 0 }"
       :style="{ 'background-image': `url(${avatar})` }"
       :focus-on-hover="true"
       @on-enter="openMenu"
@@ -53,7 +52,7 @@ watch(hasFocusedChildren, (hasFocusedChildren) => {
     <div v-show="isOpen" class="options-list">
       <BaseButton
         class="menu-btn"
-        :grid="{ row: 1, column: 0, parentId: idForChildren }"
+        :grid="{ row: 1, column: 0 }"
         :focus-on-hover="true"
         @on-focus="openMenu"
         @on-back="closeMenu"
@@ -74,7 +73,7 @@ watch(hasFocusedChildren, (hasFocusedChildren) => {
       <RouterLink to="/profile">
         <BaseButton
           class="menu-btn"
-          :grid="{ row: 2, column: 0, parentId: idForChildren }"
+          :grid="{ row: 2, column: 0 }"
           :focus-on-hover="true"
           @on-enter="router.push('/profile')"
           @on-back="closeMenu"
@@ -96,7 +95,7 @@ watch(hasFocusedChildren, (hasFocusedChildren) => {
       <RouterLink to="/profile">
         <BaseButton
           class="menu-btn"
-          :grid="{ row: 3, column: 0, parentId: idForChildren }"
+          :grid="{ row: 3, column: 0 }"
           :focus-on-hover="true"
           @on-enter="router.push('/profile')"
           @on-back="closeMenu"
@@ -116,8 +115,8 @@ watch(hasFocusedChildren, (hasFocusedChildren) => {
         </BaseButton>
       </RouterLink>
       <div class="settings-block">
-        <ThemeSwitcher :grid="{ row: 4, column: 0, parentId: idForChildren }" />
-        <LocaleSwitcher :grid="{ row: 4, column: 1, parentId: idForChildren }" />
+        <ThemeSwitcher :grid="{ row: 4, column: 0 }" />
+        <LocaleSwitcher :grid="{ row: 4, column: 1 }" />
       </div>
     </div>
   </div>

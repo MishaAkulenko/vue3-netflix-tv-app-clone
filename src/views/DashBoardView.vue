@@ -34,9 +34,8 @@ const { data: categories, isError } = useQuery({
   staleTime: 5 * 60 * 1000
 });
 
-const { idForChildren, setInitFocus, resetChildren } = useFocus({
+const { setInitFocus, resetChildren } = useFocus({
   id: `DashBoardView`,
-  parentId: props.grid.parentId,
   row: props.grid.row,
   column: props.grid.column,
   afterFocusEnter() {
@@ -58,14 +57,14 @@ watch(
       <BaseVerticalScrollList :list="categories">
         <template #slotBeforeList="{ handleFocusedRow }">
           <MainBanner
-            :grid="{ row: 0, column: 0, parentId: idForChildren }"
+            :grid="{ row: 0, column: 0 }"
             @on-focus="handleFocusedRow(0, 0)"
           />
         </template>
         <template #default="{ listItem, index, handleFocusedRow, onActiveRow }">
           <DashboardSlider
             :ref="(el) => (slides[index] = el as ComponentPublicInstance | null)"
-            :grid="{ row: index + 1, column: 0, parentId: idForChildren }"
+            :grid="{ row: index + 1, column: 0 }"
             :list="listItem.items"
             :title="listItem.category"
             :on-active-row="onActiveRow"

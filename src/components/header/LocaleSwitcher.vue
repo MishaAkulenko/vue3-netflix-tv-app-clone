@@ -8,11 +8,10 @@ const props = defineProps<{
   grid: Grid;
 }>();
 
-const { idForChildren, setInitFocus, focusMe } = useFocus({
+const { setInitFocus, focusMe } = useFocus({
   id: `LocaleSwitcher`,
   row: props.grid.row,
   column: props.grid.column,
-  parentId: props.grid.parentId,
   afterFocusEnter() {
     setInitFocus();
   }
@@ -25,7 +24,7 @@ const { setLocale } = localeStore;
 <template>
   <div class="language-switcher" @mouseenter="focusMe">
     <BaseButton
-      :grid="{ row: 0, column: 0, parentId: idForChildren }"
+      :grid="{ row: 0, column: 0 }"
       class="lang-btn scale-on-hover"
       :class="{ active: localeStore.locale === 'uk' }"
       @click="setLocale('uk')"
@@ -34,7 +33,7 @@ const { setLocale } = localeStore;
       <img class="flag" src="@/assets/icons/uk-flag.svg" alt="Українська" />
     </BaseButton>
     <BaseButton
-      :grid="{ row: 0, column: 1, parentId: idForChildren }"
+      :grid="{ row: 0, column: 1 }"
       class="lang-btn scale-on-hover"
       :class="{ active: localeStore.locale === 'en' }"
       @click="setLocale('en')"

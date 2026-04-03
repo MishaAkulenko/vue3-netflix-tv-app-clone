@@ -4,7 +4,7 @@ import { onBeforeUnmount, onMounted } from 'vue';
 const emit = defineEmits<{
   (e: 'close'): void;
 }>();
-const { idForChildren, setFocusOnNewLayer, goBackToPreviousFocusLayer } = useFocus({
+const { setFocusOnNewLayer, goBackToPreviousFocusLayer } = useFocus({
   id: 'MovieCardOverlay',
   isOverlay: true,
   row: 0,
@@ -17,7 +17,7 @@ const { idForChildren, setFocusOnNewLayer, goBackToPreviousFocusLayer } = useFoc
   }
 });
 onMounted(() => {
-  setFocusOnNewLayer(idForChildren);
+  setFocusOnNewLayer();
 });
 onBeforeUnmount(() => {
   goBackToPreviousFocusLayer();

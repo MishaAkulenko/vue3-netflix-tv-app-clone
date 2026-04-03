@@ -18,7 +18,6 @@ const emit = defineEmits<{
 const { isFocused, focusMe } = useFocus({
   row: props.grid.row,
   column: props.grid.column,
-  parentId: props.grid.parentId,
   onEnter() {
     emit('on-enter', props.payload);
   },
