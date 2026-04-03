@@ -10,7 +10,7 @@ import { BannersService } from '@/services/BannerService.ts';
 import { useQuery } from '@tanstack/vue-query';
 import type { Banner } from '@/types/banners.ts';
 import { useRoute } from 'vue-router';
-import { ref, watch } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import { useLocaleStore } from '@/stores/localeStore.ts';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
@@ -28,6 +28,8 @@ const { t } = useI18n();
 const currentBanner = ref<Banner | null>(null);
 const trailerPlaying = ref(false);
 const overlayIsOpen = ref(false);
+const trailerTeleported = ref(false);
+const teleportTarget = ref('body');
 const videoRef = ref<InstanceType<typeof VideoPlayer>>();
 
 const { isLoading, data: bannersList } = useQuery({
@@ -46,10 +48,16 @@ const pauseTrailer = () => {
   trailerPlaying.value = false;
 };
 
-const showMovieInfoOverlay = () => {
+const showMovieInfoOverlay = async () => {
   overlayIsOpen.value = true;
+  await nextTick(); // чекаємо рендер оверлею і створення #video-card-overlay-trailer
+  teleportTarget.value = '#video-card-overlay-trailer';
+  trailerTeleported.value = true;
 };
-const closeMovieInfoOverlay = () => {
+const closeMovieInfoOverlay = async () => {
+  trailerTeleported.value = false;
+  teleportTarget.value = 'body';
+  await nextTick(); // чекаємо поки відео повернеться
   overlayIsOpen.value = false;
 };
 
@@ -76,7 +84,12 @@ watch(hasFocusedChildren, (hasFocused) => {
 </script>
 
 <template>
-  <MovieCardOverlay v-if="overlayIsOpen" @close="closeMovieInfoOverlay" />
+  <MovieCardOverlay
+    v-if="overlayIsOpen && currentBanner"
+    :video-data="currentBanner"
+    @close="closeMovieInfoOverlay"
+    @play-video="playTrailer"
+  />
   <transition :name="route.meta.routeAnimation" mode="out-in" appear>
     <div
       :key="route.name"
@@ -124,7 +137,9 @@ watch(hasFocusedChildren, (hasFocused) => {
             </BaseButton>
           </div>
         </div>
-        <VideoPlayer ref="videoRef" class="banner-trailer" :src="currentBanner.trailer" />
+        <Teleport :to="teleportTarget" :disabled="!trailerTeleported">
+          <VideoPlayer ref="videoRef" class="banner-trailer" :src="currentBanner.trailer" />
+        </Teleport>
       </div>
     </div>
   </transition>

@@ -19,6 +19,7 @@ const emit = defineEmits<{
 let resizeObserver: ResizeObserver | null = null;
 const transitionSuspended = ref(false);
 const isHovering = ref(false);
+const movieOverlayIsOpen = ref(false);
 const offsetFromLeft = ref(0);
 const rawIndex = ref(0);
 const slides = useTemplateRef('slides');
@@ -83,6 +84,9 @@ const { setFocusOnHeader, isFocused, focusMe } = useFocus({
   onBack() {
     setFocusOnHeader();
   },
+  onEnter() {
+    movieOverlayIsOpen.value = true;
+  },
   onRight: scrollRight,
   onLeft: scrollLeft
 });
@@ -134,6 +138,9 @@ onUnmounted(() => {
         :slide-data="listForBuild[activeSlideIndex]!"
         :class="{ focused: isFocused && !isHovering }"
         class="main-slide full-slide-size"
+        v-bind="{ movieOverlayIsOpen }"
+        @close-overlay="movieOverlayIsOpen = false"
+        @click="movieOverlayIsOpen = true"
       />
       <div
         class="viewport-inner"

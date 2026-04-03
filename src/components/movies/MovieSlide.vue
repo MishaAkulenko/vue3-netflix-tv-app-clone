@@ -2,20 +2,46 @@
 import type { Movie } from '@/types/movies';
 import MovieTags from '@/components/movies/MovieTags.vue';
 import VideoPlayer from '@/components/movies/VideoPlayer.vue';
-import { ref, watch } from 'vue';
+import { ref, watch, nextTick } from 'vue';
+import MovieCardOverlay from '@/layouts/MovieCardOverlay.vue';
 
 const props = defineProps<{
   slideData: Movie;
   hidden?: boolean;
   hasDescription?: boolean;
   withTrailer?: boolean;
+  movieOverlayIsOpen?: boolean;
 }>();
 
+const emit = defineEmits<{
+  (e: 'close-overlay'): void;
+}>();
+
+const overlayIsOpen = ref(false);
+const trailerTeleported = ref(false);
+const teleportTarget = ref('body');
 const canPlay = ref(false);
 const videoRef = ref<InstanceType<typeof VideoPlayer>>();
 
 let playTimeout: ReturnType<typeof setTimeout>;
 
+const showMovieInfoOverlay = async () => {
+  overlayIsOpen.value = true;
+  await nextTick(); // чекаємо рендер оверлею і створення #video-card-overlay-trailer
+  teleportTarget.value = '#video-card-overlay-trailer';
+  trailerTeleported.value = true;
+};
+
+const closeMovieInfoOverlay = async () => {
+  trailerTeleported.value = false;
+  teleportTarget.value = 'body';
+  await nextTick(); // чекаємо поки відео повернеться
+  overlayIsOpen.value = false;
+};
+
+const playTrailer = () => {
+  videoRef.value?.play();
+};
 watch(
   () => props.slideData,
   () => {
@@ -26,15 +52,31 @@ watch(
     canPlay.value = false;
     playTimeout = setTimeout(() => {
       canPlay.value = true;
-      videoRef.value?.play();
+      playTrailer();
     }, 2000);
   },
   { immediate: true }
+);
+watch(
+  () => props.movieOverlayIsOpen,
+  (isOpen) => {
+    if (isOpen) {
+      showMovieInfoOverlay();
+    } else {
+      closeMovieInfoOverlay();
+    }
+  }
 );
 </script>
 
 <template>
   <div class="movie-slide-wrapper" :class="{ transparent: hidden }">
+    <MovieCardOverlay
+      v-if="movieOverlayIsOpen"
+      :video-data="slideData"
+      @close="emit('close-overlay')"
+      @play-video="playTrailer"
+    />
     <div class="poster-wrapper">
       <img class="logo" :src="slideData.logo" :alt="slideData.title" />
       <transition name="fade">
@@ -45,7 +87,9 @@ watch(
           :alt="slideData.title"
         />
       </transition>
-      <VideoPlayer v-if="withTrailer" ref="videoRef" :src="slideData.trailer"></VideoPlayer>
+      <Teleport :to="teleportTarget" :disabled="!trailerTeleported">
+        <VideoPlayer v-if="withTrailer" ref="videoRef" :src="slideData.trailer"></VideoPlayer>
+      </Teleport>
       <div v-show="hasDescription" class="description">
         <MovieTags
           v-show="hasDescription"
