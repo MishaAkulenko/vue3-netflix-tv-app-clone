@@ -9,9 +9,7 @@ const { setFocusOnNewLayer, goBackToPreviousFocusLayer } = useFocus({
   isOverlay: true,
   row: 0,
   column: 0,
-  onEnter() {
-    console.log('onEnter');
-  },
+  onEnter() {},
   onBack() {
     emit('close');
   }

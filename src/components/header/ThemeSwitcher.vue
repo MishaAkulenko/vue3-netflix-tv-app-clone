@@ -32,7 +32,7 @@ const isLightThemeActive = computed({
 </script>
 
 <template>
-  <div class="theme-switcher" @mouseenter="focusMe" :class="{ focused: isFocused }">
+  <div class="theme-switcher" :class="{ focused: isFocused }" @mouseenter="focusMe">
     <BasePillSwitcher v-model="isLightThemeActive">
       <template #left>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="icon-sun">

@@ -24,7 +24,7 @@ const route = useRoute();
 const { locale } = storeToRefs(useLocaleStore());
 const slides = ref<(ComponentPublicInstance | null)[]>([]);
 
-const { data: categories, isError } = useQuery({
+const { data: categories } = useQuery({
   queryKey: computed(() => ['contentCategories', route.name, locale]),
   queryFn: () => {
     return DashboardService.fetchDashBoardList({
@@ -56,10 +56,7 @@ watch(
     <div :key="route.fullPath" class="browse-list-wrapper">
       <BaseVerticalScrollList :list="categories">
         <template #slotBeforeList="{ handleFocusedRow }">
-          <MainBanner
-            :grid="{ row: 0, column: 0 }"
-            @on-focus="handleFocusedRow(0, 0)"
-          />
+          <MainBanner :grid="{ row: 0, column: 0 }" @on-focus="handleFocusedRow(0, 0)" />
         </template>
         <template #default="{ listItem, index, handleFocusedRow, onActiveRow }">
           <DashboardSlider
