@@ -14,13 +14,15 @@ const emit = defineEmits<{
   (e: 'on-focus-leave', value: any): void;
   (e: 'on-back', value: any): void;
 }>();
-
+const handleEnterKey = () => {
+  emit('on-enter', props.payload);
+};
 const { isFocused, focusMe } = useFocus({
   name: `BaseButton`,
   row: props.grid.row,
   column: props.grid.column,
   onEnter() {
-    emit('on-enter', props.payload);
+    handleEnterKey();
   },
   onBack() {
     emit('on-back', props.payload);
@@ -41,7 +43,12 @@ const handleMouseEnter = () => {
 </script>
 
 <template>
-  <div class="btn all-center" :class="{ focused: isFocused }" @mouseenter="handleMouseEnter">
+  <div
+    class="btn all-center"
+    :class="{ focused: isFocused }"
+    @mouseenter="handleMouseEnter"
+    @click="handleEnterKey"
+  >
     <slot></slot>
   </div>
 </template>
@@ -59,7 +66,8 @@ const handleMouseEnter = () => {
     color: var(--color-text);
   }
 }
-.banner-action-btn {
+.banner-action-btn,
+.action-btn {
   height: var(--vt-c-button-default-height);
   background: rgba(255, 255, 255, 0.35);
   color: #fff;
@@ -69,7 +77,8 @@ const handleMouseEnter = () => {
   -webkit-backdrop-filter: blur(6px);
 }
 
-.banner-action-btn.focused {
+.banner-action-btn.focused,
+.action-btn.focused {
   background: #fff;
   color: #000;
 }

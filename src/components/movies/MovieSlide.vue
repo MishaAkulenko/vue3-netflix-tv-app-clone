@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Movie } from '@/types/movies';
 import MovieTags from '@/components/movies/MovieTags.vue';
-import VideoPlayer from '@/components/movies/VideoPlayer.vue';
+import HlsCore from '@/components/player/HlsCore.vue';
 import { ref, watch, nextTick } from 'vue';
 import MovieCardOverlay from '@/layouts/MovieCardOverlay.vue';
 
@@ -21,7 +21,7 @@ const overlayIsOpen = ref(false);
 const trailerTeleported = ref(false);
 const teleportTarget = ref('body');
 const canPlay = ref(false);
-const videoRef = ref<InstanceType<typeof VideoPlayer>>();
+const videoRef = ref<InstanceType<typeof HlsCore>>();
 
 let playTimeout: ReturnType<typeof setTimeout>;
 
@@ -88,7 +88,7 @@ watch(
         />
       </transition>
       <Teleport :to="teleportTarget" :disabled="!trailerTeleported">
-        <VideoPlayer v-if="withTrailer" ref="videoRef" :src="slideData.trailer"></VideoPlayer>
+        <HlsCore v-if="withTrailer" ref="videoRef" :src="slideData.trailer"></HlsCore>
       </Teleport>
       <div v-show="hasDescription" class="description">
         <MovieTags

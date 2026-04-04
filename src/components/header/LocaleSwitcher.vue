@@ -27,7 +27,6 @@ const { setLocale } = localeStore;
       :grid="{ row: 0, column: 0 }"
       class="lang-btn scale-on-hover"
       :class="{ active: localeStore.locale === 'uk' }"
-      @click="setLocale('uk')"
       @on-enter="setLocale('uk')"
     >
       <img class="flag" src="@/assets/icons/uk-flag.svg" alt="Українська" />
@@ -36,7 +35,6 @@ const { setLocale } = localeStore;
       :grid="{ row: 0, column: 1 }"
       class="lang-btn scale-on-hover"
       :class="{ active: localeStore.locale === 'en' }"
-      @click="setLocale('en')"
       @on-enter="setLocale('en')"
     >
       <img class="flag" src="@/assets/icons/en-flag.svg" alt="English" />

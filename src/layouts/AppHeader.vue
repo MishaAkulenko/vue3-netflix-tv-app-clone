@@ -53,7 +53,6 @@ setInitFocus({ column: getInitColumn() }); // самий початковий ф
         :grid="{ row: 0, column: 1 }"
         :focus-on-hover="true"
         @on-enter="navigateTo('/')"
-        @click="navigateTo('/')"
       >
         {{ t('header.home') }}
       </BaseButton>
@@ -63,7 +62,6 @@ setInitFocus({ column: getInitColumn() }); // самий початковий ф
         :grid="{ row: 0, column: 2 }"
         :focus-on-hover="true"
         @on-enter="navigateTo('/series')"
-        @click="navigateTo('/series')"
       >
         {{ t('header.series') }}
       </BaseButton>
@@ -73,7 +71,6 @@ setInitFocus({ column: getInitColumn() }); // самий початковий ф
         :grid="{ row: 0, column: 3 }"
         :focus-on-hover="true"
         @on-enter="navigateTo('/movies')"
-        @click="navigateTo('/movies')"
       >
         {{ t('header.movies') }}
       </BaseButton>
@@ -83,7 +80,6 @@ setInitFocus({ column: getInitColumn() }); // самий початковий ф
         :grid="{ row: 0, column: 4 }"
         :focus-on-hover="true"
         @on-enter="navigateTo('/my-netflix')"
-        @click="navigateTo('/my-netflix')"
       >
         {{ t('header.my_netflix') }}
       </BaseButton>

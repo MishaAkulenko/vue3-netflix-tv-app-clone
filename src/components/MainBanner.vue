@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import BaseButton from '@/components/base/BaseButton.vue';
 import BannerInfo from '@/components/movies/BannerInfo.vue';
-import VideoPlayer from '@/components/movies/VideoPlayer.vue';
 import MovieCardOverlay from '@/layouts/MovieCardOverlay.vue';
+import TrailerPlayer from '@/components/player/TrailerPlayer.vue';
 
 import { useFocus } from '@/composables/useFocus.ts';
 import type { Grid } from '@/types/grid.ts';
@@ -18,9 +18,11 @@ import { useI18n } from 'vue-i18n';
 const props = defineProps<{
   grid: Grid;
 }>();
+
 const emit = defineEmits<{
   (e: 'on-focus'): void;
 }>();
+
 const route = useRoute();
 const { locale } = storeToRefs(useLocaleStore());
 const { t } = useI18n();
@@ -30,7 +32,7 @@ const trailerPlaying = ref(false);
 const overlayIsOpen = ref(false);
 const trailerTeleported = ref(false);
 const teleportTarget = ref('body');
-const videoRef = ref<InstanceType<typeof VideoPlayer>>();
+const videoRef = ref<InstanceType<typeof TrailerPlayer> | null>(null);
 
 const { isLoading, data: bannersList } = useQuery({
   queryKey: ['banners', locale],
@@ -39,7 +41,7 @@ const { isLoading, data: bannersList } = useQuery({
 });
 
 const playTrailer = () => {
-  videoRef.value?.play();
+  videoRef.value?.restoreSource();
   trailerPlaying.value = true;
 };
 
@@ -54,6 +56,7 @@ const showMovieInfoOverlay = async () => {
   teleportTarget.value = '#video-card-overlay-trailer';
   trailerTeleported.value = true;
 };
+
 const closeMovieInfoOverlay = async () => {
   trailerTeleported.value = false;
   teleportTarget.value = 'body';
@@ -138,7 +141,12 @@ watch(hasFocusedChildren, (hasFocused) => {
           </div>
         </div>
         <Teleport :to="teleportTarget" :disabled="!trailerTeleported">
-          <VideoPlayer ref="videoRef" class="banner-trailer" :src="currentBanner.trailer" />
+          <TrailerPlayer
+            ref="videoRef"
+            class="banner-trailer"
+            :src="currentBanner.trailer"
+            @stop="trailerPlaying = false"
+          />
         </Teleport>
       </div>
     </div>

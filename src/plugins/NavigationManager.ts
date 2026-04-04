@@ -386,6 +386,7 @@ class NavManager {
         };
       })
     );
+    console.log('OVERLAYS', this.focusLayers);
   }
 }
 

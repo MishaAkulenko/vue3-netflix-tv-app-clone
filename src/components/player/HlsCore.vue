@@ -5,7 +5,9 @@ import Hls from 'hls.js';
 const props = defineProps<{
   src?: string;
 }>();
-
+const emit = defineEmits<{
+  (e: 'stop'): void;
+}>();
 const videoRef = ref<HTMLVideoElement | null>(null);
 let hlsInstance: Hls | null = null;
 
@@ -39,6 +41,14 @@ const destroyHls = () => {
     hlsInstance = null;
   }
 };
+const restoreSource = () => {
+  if (hlsInstance) {
+    play();
+  } else {
+    initHls();
+    play();
+  }
+};
 watch(
   () => props.src,
   (newSrc) => {
@@ -69,11 +79,13 @@ const pause = () => {
 };
 const stop = () => {
   destroyHls();
+  emit('stop');
 };
 defineExpose({
   play,
   pause,
   stop,
+  restoreSource,
   init: initHls
 });
 </script>

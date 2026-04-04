@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { useFocus } from '@/composables/useFocus.ts';
-import { nextTick, onBeforeUnmount, onMounted } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, watch } from 'vue';
 import type { Movie } from '@/types/movies';
 import type { Banner } from '@/types/banners.ts';
 import MovieTags from '@/components/movies/MovieTags.vue';
 import BaseButton from '@/components/base/BaseButton.vue';
 import { useI18n } from 'vue-i18n';
 
+import { usePlayerStore } from '@/stores/playerStore.ts';
+
 const { t } = useI18n();
 
-defineProps<{
+const props = defineProps<{
   videoData: Movie | Banner;
 }>();
 const emit = defineEmits<{
@@ -17,12 +19,16 @@ const emit = defineEmits<{
   (e: 'play-video'): void;
   (e: 'pause-video'): void;
 }>();
+const playerStore = usePlayerStore();
 
 const playTrailer = () => {
   emit('play-video');
 };
 const closeOverlay = () => {
   emit('close');
+};
+const playContent = () => {
+  playerStore.setSourceData(props.videoData);
 };
 const { setFocusOnNewLayer, goBackToPreviousFocusLayer, setInitFocus } = useFocus({
   name: 'MovieCardOverlay',
@@ -53,11 +59,11 @@ onBeforeUnmount(() => {
 
       <div class="top-actions">
         <BaseButton
-          class="back-btn"
+          class="action-btn back-btn"
           :grid="{ row: 0, column: 0 }"
+          :focus-on-hover="true"
           @on-enter="closeOverlay"
           @on-back="closeOverlay"
-          @click="closeOverlay"
         >
           <span class="back-icon">←</span>
           {{ t('common.general.back') }}
@@ -85,6 +91,15 @@ onBeforeUnmount(() => {
           <p class="description">
             {{ videoData.description }}
           </p>
+          <BaseButton
+            class="action-btn"
+            :focus-on-hover="true"
+            :grid="{ row: 1, column: 0 }"
+            @on-enter="playContent"
+          >
+            <span class="banner-action-icon-play"></span>
+            {{ t('common.banner.watch') }}
+          </BaseButton>
         </div>
       </div>
     </div>
@@ -99,7 +114,7 @@ onBeforeUnmount(() => {
   width: 100vw;
   height: 100vh;
   background: black;
-  z-index: 1000;
+  z-index: 100;
 
   #video-card-overlay-trailer {
     width: 100%;
@@ -128,25 +143,10 @@ onBeforeUnmount(() => {
     .back-btn {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: white;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 5rem;
-      padding: 0 2rem;
-      height: 4.5rem;
-      transition: all 0.3s ease;
 
       .back-icon {
-        font-size: 2rem;
+        font-size: 1.5rem;
         margin-right: 0.5rem;
-      }
-
-      &.focused {
-        background: white;
-        color: black;
-        transform: scale(1.1);
       }
     }
   }
@@ -177,7 +177,9 @@ onBeforeUnmount(() => {
       font-size: 1.4rem;
       margin-bottom: 1.5rem;
     }
-
+    .action-btn {
+      margin-top: 4rem;
+    }
     .description {
       font-size: 1.6rem;
       line-height: 1.4;
@@ -194,6 +196,9 @@ onBeforeUnmount(() => {
       linear-gradient(90deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.4) 40%, rgba(0, 0, 0, 0) 70%),
       linear-gradient(0deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.2) 30%, rgba(0, 0, 0, 0) 60%);
     pointer-events: none;
+  }
+  .action-btn {
+    font-size: 1.2rem;
   }
 }
 </style>

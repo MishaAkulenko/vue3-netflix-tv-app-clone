@@ -67,7 +67,10 @@ export function useFocus(config: FocusableNodeConfig) {
     setFocusOnNewLayer,
     componentId: uniqId,
     setFocusOnFirstChild,
-    goBackToPreviousFocusLayer
+    goBackToPreviousFocusLayer,
+    logNodes: () => {
+      NavigationManager.logNodes();
+    }
   };
 }
 
