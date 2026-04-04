@@ -1,18 +1,18 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T">
 import type { Grid } from '@/types/grid.ts';
 import { useFocus } from '@/composables/useFocus.ts';
 
 const props = defineProps<{
-  payload?: any;
+  payload?: T;
   focusOnHover?: boolean;
   grid: Grid; // Грід у теорії може бути і не заданим, якщо кнопка якась пасивна, або тільки для мишки
 }>();
 
 const emit = defineEmits<{
-  (e: 'on-enter', value: any): void;
-  (e: 'on-focus', value: any): void;
-  (e: 'on-focus-leave', value: any): void;
-  (e: 'on-back', value: any): void;
+  'on-enter': [value: T | undefined];
+  'on-focus': [value: T | undefined];
+  'on-focus-leave': [value: T | undefined];
+  'on-back': [value: T | undefined];
 }>();
 const handleEnterKey = () => {
   emit('on-enter', props.payload);

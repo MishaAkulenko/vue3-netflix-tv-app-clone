@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useFocus } from '@/composables/useFocus.ts';
-import { nextTick, onBeforeUnmount, onMounted, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted } from 'vue';
 import type { Movie } from '@/types/movies';
 import type { Banner } from '@/types/banners.ts';
 import MovieTags from '@/components/movies/MovieTags.vue';
@@ -13,6 +13,7 @@ const { t } = useI18n();
 
 const props = defineProps<{
   videoData: Movie | Banner;
+  trailerPlaying: boolean;
 }>();
 const emit = defineEmits<{
   (e: 'close'): void;
@@ -20,6 +21,13 @@ const emit = defineEmits<{
   (e: 'pause-video'): void;
 }>();
 const playerStore = usePlayerStore();
+
+const poster = computed(() => {
+  if ('poster' in props.videoData) {
+    return props.videoData.poster;
+  }
+  return props.videoData.bannerImage;
+});
 
 const playTrailer = () => {
   emit('play-video');
@@ -56,7 +64,11 @@ onBeforeUnmount(() => {
     <div class="movie-card-wrapper">
       <div id="video-card-overlay-trailer"></div>
       <div class="video-gradient"></div>
-
+      <transition name="fade">
+        <div v-if="!trailerPlaying" class="poster-container">
+          <img :src="poster" :alt="videoData.title" class="poster-image" />
+        </div>
+      </transition>
       <div class="top-actions">
         <BaseButton
           class="action-btn back-btn"
@@ -133,7 +145,31 @@ onBeforeUnmount(() => {
       z-index: 1;
     }
   }
+  .poster-container {
+    width: 100vw;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: black;
+    z-index: 1;
 
+    .poster-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background:
+        linear-gradient(90deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.4) 40%, rgba(0, 0, 0, 0) 70%),
+        linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.2) 30%, rgba(0, 0, 0, 0) 60%);
+    }
+  }
   .top-actions {
     position: absolute;
     top: 4rem;
@@ -200,5 +236,16 @@ onBeforeUnmount(() => {
   .action-btn {
     font-size: 1.2rem;
   }
+}
+
+// Анімація для постера
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.8s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

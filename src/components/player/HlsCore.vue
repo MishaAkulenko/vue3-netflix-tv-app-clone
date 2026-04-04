@@ -10,6 +10,9 @@ const emit = defineEmits<{
 }>();
 const videoRef = ref<HTMLVideoElement | null>(null);
 let hlsInstance: Hls | null = null;
+const isPlaying = ref(false);
+const buffering = ref(false);
+const error = ref(false);
 
 const initHls = () => {
   destroyHls();
@@ -35,7 +38,13 @@ const initHls = () => {
     videoRef.value.src = props.src;
   }
 };
+const resetState = () => {
+  isPlaying.value = false;
+  buffering.value = false;
+  error.value = false;
+};
 const destroyHls = () => {
+  resetState();
   if (hlsInstance) {
     hlsInstance.destroy();
     hlsInstance = null;
@@ -58,14 +67,6 @@ watch(
   }
 );
 
-onMounted(() => {
-  initHls();
-});
-
-onBeforeUnmount(() => {
-  destroyHls();
-});
-
 const play = () => {
   if (videoRef.value) {
     videoRef.value.play().catch((e) => console.error('Playback failed', e));
@@ -81,12 +82,41 @@ const stop = () => {
   destroyHls();
   emit('stop');
 };
+const setListeners = () => {
+  if (!videoRef.value) return;
+
+  videoRef.value.oncanplay = () => {
+    isPlaying.value = true;
+    buffering.value = false;
+  };
+  videoRef.value.onwaiting = () => {
+    buffering.value = true;
+  };
+  videoRef.value.onplay = () => {
+    buffering.value = false;
+  };
+  videoRef.value.onerror = () => {
+    error.value = true;
+  };
+};
+onMounted(() => {
+  initHls();
+  setListeners();
+});
+
+onBeforeUnmount(() => {
+  destroyHls();
+});
+
 defineExpose({
   play,
   pause,
   stop,
   restoreSource,
-  init: initHls
+  init: initHls,
+  isPlaying,
+  buffering,
+  error
 });
 </script>
 

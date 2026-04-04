@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { Movie } from '@/types/movies';
 import MovieTags from '@/components/movies/MovieTags.vue';
-import HlsCore from '@/components/player/HlsCore.vue';
+import type HlsCore from '@/components/player/HlsCore.vue';
 import { ref, watch, nextTick } from 'vue';
 import MovieCardOverlay from '@/layouts/MovieCardOverlay.vue';
+import TrailerPlayer from '@/components/player/TrailerPlayer.vue';
 
 const props = defineProps<{
   slideData: Movie;
@@ -74,9 +75,11 @@ watch(
     <MovieCardOverlay
       v-if="movieOverlayIsOpen"
       :video-data="slideData"
+      :trailer-playing="canPlay"
       @close="emit('close-overlay')"
       @play-video="playTrailer"
     />
+
     <div class="poster-wrapper">
       <img class="logo" :src="slideData.logo" :alt="slideData.title" />
       <transition name="fade">
@@ -88,7 +91,12 @@ watch(
         />
       </transition>
       <Teleport :to="teleportTarget" :disabled="!trailerTeleported">
-        <HlsCore v-if="withTrailer" ref="videoRef" :src="slideData.trailer"></HlsCore>
+        <TrailerPlayer
+          v-if="withTrailer"
+          ref="videoRef"
+          :src="slideData.trailer"
+          @stop="canPlay = false"
+        />
       </Teleport>
       <div v-show="hasDescription" class="description">
         <MovieTags

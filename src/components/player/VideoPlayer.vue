@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import HlsCore from '@/components/player/HlsCore.vue';
-import { nextTick, onMounted, useTemplateRef, watch } from 'vue';
+import { nextTick, onMounted, useTemplateRef } from 'vue';
 import { storeToRefs } from 'pinia';
 import { usePlayerStore } from '@/stores/playerStore.ts';
 import { useFocus } from '@/composables/useFocus.ts';
 import BaseButton from '@/components/base/BaseButton.vue';
+import BaseLoader from '@/components/base/BaseLoader.vue';
 import { useI18n } from 'vue-i18n';
 
 const hlsCore = useTemplateRef<InstanceType<typeof HlsCore>>('hlsCore');
@@ -27,20 +28,13 @@ const closePlayer = () => {
   goBackToPreviousFocusLayer();
   playerStore.clearSource();
 };
+
 onMounted(async () => {
   setFocusOnNewLayer();
   await nextTick();
   setInitFocus();
   hlsCore?.value?.play();
 });
-
-watch(
-  sourceData,
-  () => {
-    console.log('VIDEO PLAYER', sourceData);
-  },
-  { immediate: true }
-);
 </script>
 
 <template>
@@ -56,6 +50,7 @@ watch(
       <span class="back-icon">←</span>
       {{ t('common.general.back') }}
     </BaseButton>
+    <BaseLoader v-if="hlsCore && hlsCore.buffering"></BaseLoader>
     <HlsCore ref="hlsCore" :src="playLink" />
   </div>
 </template>

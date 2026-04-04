@@ -90,6 +90,7 @@ watch(hasFocusedChildren, (hasFocused) => {
   <MovieCardOverlay
     v-if="overlayIsOpen && currentBanner"
     :video-data="currentBanner"
+    :trailer-playing="trailerPlaying"
     @close="closeMovieInfoOverlay"
     @play-video="playTrailer"
   />
